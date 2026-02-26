@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GiáVàng.vn – Tổng hợp giá vàng bạc Việt Nam</title>
+  <meta name="description" content="Tổng hợp giá vàng, giá bạc của SJC, DOJI, PNJ, Bảo Tín Minh Châu và nhiều thương hiệu lớn tại Việt Nam cập nhật liên tục."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link rel="stylesheet" href="index.css">
+
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<!-- TOAST -->
+<div id="toast"><span class="t-icon">✅</span><span id="toast-msg">Đã cập nhật dữ liệu!</span></div>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-icon">G</div>
+      <div class="logo-text">GiáVàng<span>.vn</span></div>
+    </a>
+    <div class="nav-right">
+      <div class="nav-clock" id="live-clock">--:--:--</div>
+      <button class="btn-refresh" id="btn-refresh">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Cập nhật
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="blink"></span>
+    Cập nhật liên tục · Dữ liệu thực tế
+  </div>
+  <h1>Giá Vàng &amp; Bạc Hôm Nay</h1>
+  <p>Tổng hợp giá mua – bán từ <strong>SJC, DOJI, PNJ, Bảo Tín Minh Châu, Mi Hồng</strong> và nhiều thương hiệu lớn tại Việt Nam.</p>
+</section>
+
+<!-- ===== STAT STRIP ===== -->
+<div class="stat-strip" id="stat-strip">
+  <div class="stat-card">
+    <div class="stat-label">🥇 Vàng SJC (Mua)</div>
+    <div class="stat-value gold-val">89.500</div>
+    <div class="stat-sub">nghìn đồng / chỉ &nbsp;<span class="change-up">▲ +200</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">🥇 Vàng SJC (Bán)</div>
+    <div class="stat-value gold-val">91.800</div>
+    <div class="stat-sub">nghìn đồng / chỉ &nbsp;<span class="change-up">▲ +150</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">🌐 Vàng Thế Giới</div>
+    <div class="stat-value gold-val">2.940</div>
+    <div class="stat-sub">USD / oz &nbsp;<span class="change-down">▼ -5</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">⚪ Bạc SJC (Bán)</div>
+    <div class="stat-value silver-val">1.050</div>
+    <div class="stat-sub">nghìn đồng / chỉ &nbsp;<span class="change-up">▲ +10</span></div>
+  </div>
+</div>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker-inner">
+    <!-- items duplicated in JS for seamless loop -->
+  </div>
+</div>
+
+<!-- ===== TABS ===== -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" data-tab="vang">🥇 Giá Vàng</button>
+    <button class="tab" data-tab="bac">⚪ Giá Bạc</button>
+    <button class="tab" data-tab="thegioi">🌐 Thế Giới</button>
+  </div>
+</div>
+
+<!-- ===== SECTION: VÀNG ===== -->
+<div class="section" id="section-vang">
+  <div class="section-header">
+    <div class="section-title"><span class="icon">🏪</span> Giá Vàng Trong Nước – Hôm Nay</div>
+    <div class="section-meta" id="last-updated"></div>
+  </div>
+  <div class="brand-grid" id="brand-grid-vang">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- ===== SECTION: BẠC ===== -->
+<div class="section" id="section-bac" style="display:none">
+  <div class="section-header">
+    <div class="section-title"><span class="icon">⚪</span> Giá Bạc Trong Nước – Hôm Nay</div>
+  </div>
+  <div class="brand-grid" id="brand-grid-bac">
+  </div>
+</div>
+
+<!-- ===== SECTION: THẾ GIỚI ===== -->
+<div class="section" id="section-thegioi" style="display:none">
+  <div class="section-header">
+    <div class="section-title"><span class="icon">🌐</span> Giá Vàng Thế Giới</div>
+  </div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+    <table class="world-table">
+      <thead>
+        <tr>
+          <th>Kim loại / Sản phẩm</th>
+          <th>Giá (USD)</th>
+          <th>Giá (VNĐ/oz)</th>
+          <th>Thay đổi</th>
+          <th>% Thay đổi</th>
+        </tr>
+      </thead>
+      <tbody id="world-tbody">
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>📌 Dữ liệu giá vàng được tổng hợp từ các trang chính thức: <a href="#">sjc.com.vn</a> · <a href="#">doji.vn</a> · <a href="#">pnj.com.vn</a> · <a href="#">baotinminhchau.com</a></p>
+  <p style="margin-top:6px">⚠️ Giá hiển thị mang tính tham khảo. Vui lòng kiểm tra tại cửa hàng trước khi giao dịch. &copy; 2026 GiáVàng.vn</p>
+</footer>
+
+<!-- ===== SCRIPT ===== -->
+<script src="./index.js"></script>
+</body>
+</html>
