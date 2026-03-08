@@ -1,600 +1,977 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Giá Vàng Hôm Nay – Tổng Hợp SJC, DOJI, PNJ, Phú Quý, Bảo Tín | GiáVàng.vn</title>
-  <meta name="description"
-        content="Bảng giá vàng, giá bạc hôm nay của SJC, DOJI, PNJ, Phú Quý, Bảo Tín Minh Châu cập nhật liên tục. So sánh giá mua – bán nhanh nhất Việt Nam. Biểu đồ lịch sử, công cụ tính lời lỗ." />
-  <meta name="keywords"
-        content="giá vàng hôm nay, giá vàng SJC, giá vàng DOJI, giá vàng PNJ, giá bạc hôm nay, tỷ giá vàng, giá vàng thế giới, spread vàng" />
-  <meta name="robots" content="index, follow" />
-  <meta property="og:title" content="Giá Vàng Hôm Nay – GiáVàng.vn" />
-  <meta property="og:description"
-        content="Tổng hợp giá vàng SJC, DOJI, PNJ, Phú Quý, Bảo Tín Minh Châu cập nhật liên tục. So sánh nội địa vs thế giới." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://giavang.vn/" />
-  <meta property="og:image" content="https://giavang.vn/og-image.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Giá Vàng Hôm Nay – GiáVàng.vn" />
-  <link rel="canonical" href="https://giavang.vn/" />
-
-  <!-- Schema.org -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "GiáVàng.vn",
-      "url": "https://giavang.vn",
-      "description": "Tổng hợp giá vàng, giá bạc từ các thương hiệu lớn tại Việt Nam cập nhật liên tục",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://giavang.vn/?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-  </script>
-
-  <!-- Fonts -->
+  <title>Giá Vàng & Bạc Thế Giới – GiáVàng.vn</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
-    rel="stylesheet" />
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <!-- Chart.js -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <!-- CSS -->
-  <link rel="stylesheet" href="{{ asset('frontend/css/index.css') }}" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #07090f;
+      --bg2:       #0d1018;
+      --bg3:       #131724;
+      --bg4:       #1a2030;
+      --border:    rgba(255,255,255,0.07);
+      --border2:   rgba(255,255,255,0.12);
+      --gold:      #f5c518;
+      --gold2:     #ffd76e;
+      --silver:    #b0bec5;
+      --silver2:   #dde6ed;
+      --silver3:   #60d4f0;
+      --text:      #e4e8f2;
+      --text2:     #c4cad8;
+      --muted:     #6e778c;
+      --muted2:    #909ab2;
+      --green:     #22c97a;
+      --red:       #f55252;
+      --blue:      #4f7af8;
+      --radius:    14px;
+      --radius-sm: 8px;
+      --shadow:    0 8px 40px rgba(0,0,0,0.55);
+      --shadow-sm: 0 4px 16px rgba(0,0,0,0.35);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Background glow */
+    .bg-glow {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 45% at 15% 0%, rgba(79,122,248,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 90%, rgba(245,197,24,0.05) 0%, transparent 60%);
+    }
+
+    /* HEADER */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(7,9,15,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 60px;
+      display: flex; align-items: center; gap: 24px;
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--gold), #c8820a);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 16px; font-weight: 900;
+      color: #07090f; box-shadow: 0 0 18px rgba(245,197,24,0.4);
+    }
+    .logo-text {
+      font-size: 20px; font-weight: 800;
+      background: linear-gradient(90deg, var(--gold2), var(--gold));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .logo-text span { -webkit-text-fill-color: var(--muted); font-weight: 400; font-size: 13px; }
+
+    .header-tag {
+      margin-left: auto; font-size: 12px; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 8px var(--green);
+      animation: blink 1.3s infinite; flex-shrink: 0;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity:1; box-shadow: 0 0 8px var(--green); }
+      50%      { opacity:0.3; box-shadow:none; }
+    }
+
+    /* MAIN */
+    main {
+      position: relative; z-index: 1;
+      max-width: 1600px; margin: 0 auto;
+      padding: 32px 28px 80px;
+    }
+
+    /* PAGE HEADER */
+    .page-header { margin-bottom: 32px; }
+    .page-header h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 5px; }
+    .page-header p  { font-size: 13px; color: var(--muted); }
+
+    /* TICKER */
+    .ticker-wrap {
+      background: var(--bg2);
+      border: 1px solid rgba(245,197,24,0.15);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 28px;
+    }
+    .ticker-label {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 16px 7px; font-size: 11px; font-weight: 700;
+      color: var(--gold2); text-transform: uppercase; letter-spacing: 0.1em;
+      background: linear-gradient(90deg, rgba(245,197,24,0.08), transparent);
+      border-bottom: 1px solid rgba(245,197,24,0.08);
+    }
+    .tradingview-widget-container.ticker-tv { width: 100%; min-height: 46px; }
+
+    /* SECTION */
+    .section-block { margin-bottom: 44px; }
+    .section-head {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px;
+    }
+    .section-icon {
+      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .section-head h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+    .section-head p  { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+    /* TV CHARTS GRID */
+    .tv-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media(max-width:960px) { .tv-charts-grid { grid-template-columns: 1fr; } }
+
+    .tv-chart-card {
+      border-radius: var(--radius); overflow: hidden;
+      display: flex; flex-direction: column;
+      border: 1px solid var(--border); background: var(--bg2);
+      transition: border-color .25s, box-shadow .25s, transform .25s;
+    }
+    .tv-chart-card:hover { transform: translateY(-3px); }
+
+    .card-gold   { border-color: rgba(245,197,24,0.22); box-shadow: 0 0 0 1px rgba(245,197,24,0.06); }
+    .card-gold:hover { border-color: rgba(245,197,24,0.45); box-shadow: 0 10px 40px rgba(245,197,24,0.12); }
+    .card-silver { border-color: rgba(176,190,197,0.22); box-shadow: 0 0 0 1px rgba(176,190,197,0.06); }
+    .card-silver:hover { border-color: rgba(176,190,197,0.45); box-shadow: 0 10px 40px rgba(176,190,197,0.1); }
+
+    .card-head {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+    }
+    .card-gold   .card-head { background: linear-gradient(90deg, rgba(245,197,24,0.1), transparent); border-bottom-color: rgba(245,197,24,0.1); }
+    .card-silver .card-head { background: linear-gradient(90deg, rgba(176,190,197,0.08), transparent); border-bottom-color: rgba(176,190,197,0.1); }
+
+    .card-badge {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .badge-gold   { background:linear-gradient(135deg,rgba(245,197,24,.25),rgba(245,197,24,.08)); border:1px solid rgba(245,197,24,.3); }
+    .badge-silver { background:linear-gradient(135deg,rgba(176,190,197,.2),rgba(176,190,197,.06)); border:1px solid rgba(176,190,197,.25); }
+
+    .card-info { flex: 1; }
+    .card-name { font-size: 16px; font-weight: 800; }
+    .card-gold  .card-name { color: var(--gold2); }
+    .card-silver .card-name { color: var(--silver2); }
+    .card-symbol { font-size: 11px; color: var(--muted); margin-top: 3px; font-family:'JetBrains Mono',monospace; letter-spacing:.03em; }
+
+    .card-powered { text-align: right; flex-shrink: 0; }
+    .card-powered span { display:block; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+    .card-powered strong { font-size:12px; font-weight:700; color:var(--blue); }
+
+    .card-chart { width:100%; height:600px; display:block; }
+    .card-chart .tradingview-widget-container { width:100%; height:100%; }
+    .card-chart .tradingview-widget-container__widget { width:100%; height:calc(100% - 32px); }
+
+    /* ����������������������������������������������
+       SILVER PRICE SECTION
+    ���������������������������������������������� */
+    .silver-section {
+      background: var(--bg2);
+      border: 1px solid rgba(176,190,197,0.18);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Header */
+    .sv-header {
+      padding: 20px 24px 16px;
+      background: linear-gradient(135deg, rgba(176,190,197,0.1), rgba(96,212,240,0.05), transparent);
+      border-bottom: 1px solid rgba(176,190,197,0.12);
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+
+    .sv-title-row { display:flex; align-items:center; gap:12px; }
+    .sv-title-icon { font-size: 28px; filter: drop-shadow(0 0 8px rgba(176,190,197,0.5)); }
+    .sv-title-info h3 { font-size: 18px; font-weight: 800; color: var(--silver2); letter-spacing: -0.3px; }
+    .sv-title-info p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* Unit tabs — dùng chung cho tất cả thương hiệu */
+    .sv-unit-tabs { display: flex; gap: 6px; }
+    .sv-unit-btn, .ac-unit-btn, .dj-unit-btn {
+      padding: 7px 16px; border-radius: var(--radius-sm);
+      font-size: 12.5px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--bg3);
+      color: var(--muted2); cursor: pointer;
+      transition: all .2s; font-family: 'Inter', sans-serif;
+    }
+    .sv-unit-btn:hover, .ac-unit-btn:hover, .dj-unit-btn:hover { border-color: var(--border2); color: var(--text); }
+    .sv-unit-btn.active, .ac-unit-btn.active, .dj-unit-btn.active {
+      background: linear-gradient(135deg, #b0bec5, #78909c);
+      color: #07090f; border-color: transparent;
+      box-shadow: 0 2px 10px rgba(176,190,197,0.35);
+    }
+
+    /* Price display */
+    .sv-prices {
+      display: flex; align-items: flex-start; gap: 32px;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .sv-price-block { display: flex; flex-direction: column; gap: 4px; }
+    .sv-price-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+    .sv-price-buy {
+      font-size: 32px; font-weight: 900;
+      font-family: 'JetBrains Mono', monospace; letter-spacing: -1px;
+      color: #f55252;
+    }
+    .sv-price-sell {
+      font-size: 32px; font-weight: 900;
+      font-family: 'JetBrains Mono', monospace; letter-spacing: -1px;
+      color: var(--green);
+    }
+
+    .sv-percent-block {
+      margin-left: auto; display: flex; align-items: center; gap: 10px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 10px 18px;
+      flex-wrap: wrap;
+    }
+    .sv-pct-value {
+      font-size: 22px; font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .sv-pct-value.up   { color: var(--green); }
+    .sv-pct-value.down { color: var(--red); }
+    .sv-pct-days  { font-size: 12px; color: var(--muted); }
+    .sv-updated   { font-size: 11px; color: var(--muted); padding: 0 24px 12px; }
+
+    /* Chart controls */
+    .sv-chart-controls {
+      display: flex; align-items: center; gap: 8px;
+      padding: 16px 24px 0;
+      flex-wrap: wrap;
+    }
+    .sv-chart-label { font-size: 13px; font-weight: 600; color: var(--silver2); margin-right: 4px; }
+    /* Period buttons — dùng chung cho tất cả thương hiệu */
+    .sv-period-btn, .ac-period-btn, .dj-period-btn {
+      padding: 5px 13px; border-radius: 6px;
+      font-size: 12px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--bg3);
+      color: var(--muted2); cursor: pointer;
+      transition: all .2s; font-family: 'Inter', sans-serif;
+    }
+    .sv-period-btn:hover, .ac-period-btn:hover, .dj-period-btn:hover { border-color: var(--border2); color: var(--text); }
+    .sv-period-btn.active, .ac-period-btn.active, .dj-period-btn.active {
+      background: linear-gradient(135deg, var(--blue), #6d28d9);
+      color: #fff; border-color: transparent;
+      box-shadow: 0 2px 8px rgba(79,122,248,0.35);
+    }
+
+    .sv-chart-type-label { font-size: 11px; color: var(--muted); margin-left: 4px; }
+
+    /* Chart canvas wrapper */
+    .sv-canvas-wrap {
+      padding: 16px 24px 24px;
+      position: relative; height: 420px;
+    }
+    /* Canvas — dùng chung cho tất cả chart */
+    .sv-canvas-wrap canvas { width: 100% !important; height: 100% !important; }
+
+    /* Loading / error state */
+    .sv-loading {
+      display: flex; align-items: center; justify-content: center;
+      height: 200px; color: var(--muted); font-size: 14px; gap: 10px;
+    }
+    .sv-spinner {
+      width: 20px; height: 20px; border: 2px solid var(--border2);
+      border-top-color: var(--silver); border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* No-data */
+    .sv-no-data {
+      padding: 32px 24px; text-align: center;
+      color: var(--muted); font-size: 13px;
+    }
+    .sv-no-data strong { color: var(--text2); display: block; margin-bottom: 6px; }
+
+    /* Footer note */
+    .foot-note { text-align:center; margin-top:32px; font-size:12px; color:var(--muted); }
+  
+    /* ══════════════════════════════════════════════
+       COMPACT SILVER BRAND SECTION
+    ══════════════════════════════════════════════ */
+    .sv-compact-section {
+      margin-top: 32px;
+    }
+    .sv-section-head {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 16px;
+    }
+    .sv-section-head .sv-section-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg,#b0bec5,#546e7a);
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; flex-shrink:0;
+    }
+    .sv-section-head h2 { font-size:17px; font-weight:800; color:#e4e8f2; margin:0; }
+    .sv-section-head p  { font-size:11.5px; color:var(--muted); margin:2px 0 0; }
+
+    /* Brand cards grid */
+    .sv-brands-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media (max-width:900px) {
+      .sv-brands-grid { grid-template-columns:1fr; }
+    }
+
+    .sv-brand-card {
+      background: var(--bg2);
+      border: 1px solid rgba(176,190,197,0.15);
+      border-radius: var(--radius);
+      padding: 14px 16px 12px;
+      cursor: pointer;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .sv-brand-card:hover { border-color: rgba(176,190,197,0.35); }
+    .sv-brand-card.active {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px var(--blue), 0 4px 20px rgba(79,122,248,0.12);
+    }
+
+    /* Card header */
+    .sv-card-head {
+      display:flex; align-items:center; gap:10px; margin-bottom:10px;
+    }
+    .sv-card-logo {
+      width:32px; height:32px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px; flex-shrink:0;
+    }
+    .sv-card-name { font-size:13px; font-weight:700; color:var(--silver2); }
+    .sv-card-sub  { font-size:10.5px; color:var(--muted); margin-top:1px; }
+
+    /* Unit tabs inside card */
+    .sv-card-tabs { display:flex; gap:5px; margin-bottom:10px; }
+    .sv-tab {
+      padding: 4px 10px; border-radius: 5px;
+      font-size: 11.5px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--bg3);
+      color: var(--muted2); cursor: pointer;
+      transition: all .18s; font-family:'Inter',sans-serif;
+    }
+    .sv-tab:hover { border-color:var(--border2); color:var(--text); }
+    .sv-tab.active {
+      background: linear-gradient(135deg,#b0bec5,#78909c);
+      color:#07090f; border-color:transparent;
+      box-shadow: 0 2px 8px rgba(176,190,197,0.3);
+    }
+
+    /* Card prices */
+    .sv-card-prices {
+      display:flex; align-items:flex-end; gap:12px;
+    }
+    .sv-card-price-col { display:flex; flex-direction:column; gap:2px; }
+    .sv-cprice-label   { font-size:10px; color:var(--muted); }
+    .sv-cprice-buy  {
+      font-size:20px; font-weight:900;
+      font-family:'JetBrains Mono',monospace;
+      color:#f55252; letter-spacing:-0.5px; line-height:1;
+    }
+    .sv-cprice-sell {
+      font-size:20px; font-weight:900;
+      font-family:'JetBrains Mono',monospace;
+      color:var(--green); letter-spacing:-0.5px; line-height:1;
+    }
+    .sv-card-pct {
+      margin-left:auto;
+      font-size:16px; font-weight:800;
+      font-family:'JetBrains Mono',monospace;
+    }
+    .sv-card-pct.up   { color:var(--green); }
+    .sv-card-pct.down { color:var(--red); }
+    .sv-card-pct-days { font-size:10px; color:var(--muted); text-align:right; margin-top:2px; }
+
+    /* Shared chart section */
+    .sv-shared-chart-wrap {
+      background: var(--bg2);
+      border: 1px solid rgba(176,190,197,0.15);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+    .sv-shared-chart-bar {
+      display:flex; align-items:center; gap:10px;
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap:wrap;
+    }
+    .sv-chart-brand-tabs { display:flex; gap:5px; }
+    .sv-chart-brand {
+      padding: 5px 13px; border-radius:6px;
+      font-size:12px; font-weight:600;
+      border:1px solid var(--border); background:var(--bg3);
+      color:var(--muted2); cursor:pointer;
+      transition:all .18s; font-family:'Inter',sans-serif;
+    }
+    .sv-chart-brand:hover { border-color:var(--border2); color:var(--text); }
+    .sv-chart-brand.active {
+      background:linear-gradient(135deg,var(--blue),#6d28d9);
+      color:#fff; border-color:transparent;
+      box-shadow:0 2px 8px rgba(79,122,248,0.35);
+    }
+    .sv-chart-period-tabs { display:flex; gap:5px; margin-left:4px; }
+    .sv-prd {
+      padding: 5px 11px; border-radius:6px;
+      font-size:11.5px; font-weight:600;
+      border:1px solid var(--border); background:var(--bg3);
+      color:var(--muted2); cursor:pointer;
+      transition:all .18s; font-family:'Inter',sans-serif;
+    }
+    .sv-prd:hover { border-color:var(--border2); color:var(--text); }
+    .sv-prd.active {
+      background:rgba(79,122,248,0.18);
+      color:var(--blue); border-color:rgba(79,122,248,0.4);
+    }
+    .sv-chart-unit-label {
+      margin-left:auto; font-size:11px; color:var(--muted);
+    }
+    .sv-shared-canvas-wrap {
+      padding:12px 16px 16px;
+      position:relative; height:320px;
+    }
+    .sv-shared-canvas-wrap canvas { width:100%!important; height:100%!important; }
+
+    .sv-footnote {
+      font-size:10.5px; color:var(--muted);
+      text-align:center; margin-top:10px; padding:0 4px;
+    }
+
+  
+    /* ══ WORLD CHARTS SECTION ══ */
+    .world-charts-section {
+      margin-bottom: 28px;
+    }
+    .wc-header {
+      display:flex; align-items:center; gap:14px; margin-bottom:14px;
+    }
+    .wc-header-icon {
+      width:40px; height:40px; border-radius:10px;
+      background:linear-gradient(135deg,#f59e0b,#d97706);
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; flex-shrink:0;
+    }
+    .wc-header h2 { font-size:17px; font-weight:800; color:#e4e8f2; margin:0; }
+    .wc-header p  { font-size:11.5px; color:var(--muted); margin:2px 0 0; }
+
+    .world-charts-grid {
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    @media (max-width:700px) {
+      .world-charts-grid { grid-template-columns:1fr; }
+    }
+
+    .world-chart-card {
+      background: var(--bg2);
+      border: 1px solid rgba(176,190,197,0.15);
+      border-radius: var(--radius);
+      padding: 12px 14px 10px;
+      overflow: hidden;
+    }
+    .wc-card-label {
+      display:flex; align-items:center; gap:7px;
+      font-size:12px; font-weight:700; color:var(--silver2);
+      margin-bottom:10px;
+    }
+    .wc-dot {
+      width:8px; height:8px; border-radius:50%; flex-shrink:0;
+    }
+    .wc-widget-wrap {
+      height: 220px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .wc-widget-wrap .tradingview-widget-container,
+    .wc-widget-wrap .tradingview-widget-container__widget {
+      width:100%; height:100%;
+    }
+
+  </style>
 </head>
-
 <body>
-
 <div class="bg-glow"></div>
-<div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-<!-- TOAST -->
-<div id="toast" role="alert" aria-live="polite">
-  <span class="t-icon">✅</span>
-  <span id="toast-msg">Đã cập nhật!</span>
-</div>
-
-<!-- ===== HEADER ===== -->
-<header id="main-header">
-  <div class="nav-inner">
-    <button class="hamburger" id="hamburger" aria-label="Mở menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-    <a href="/" class="logo" aria-label="GiáVàng.vn – Trang chủ">
-      <div class="logo-icon" aria-hidden="true">G</div>
-      <div class="logo-text">GiáVàng<span>.vn</span></div>
-    </a>
-    <nav class="header-nav" id="header-nav" aria-label="Menu chính">
-      <a href="#prices" class="hn-link">Bảng Giá</a>
-      <a href="#compare" class="hn-link">So Sánh TG</a>
-      <a href="#spread" class="hn-link">Spread %</a>
-      <a href="#chart" class="hn-link">Biểu Đồ</a>
-      <a href="#calculator" class="hn-link">Tính Lời/Lỗ</a>
-      <a href="#alert" class="hn-link">Cảnh Báo</a>
-    </nav>
-    <div class="nav-right">
-      <div class="nav-clock" id="live-clock" aria-label="Đồng hồ">--:--:--</div>
-      <button class="btn-refresh" id="btn-refresh" aria-label="Cập nhật dữ liệu">
-        <svg id="refresh-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M23 4v6h-6" />
-          <path d="M1 20v-6h6" />
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-        </svg>
-        <span>Cập nhật</span>
-      </button>
-    </div>
+<!-- HEADER -->
+<header>
+  <a href="/" class="logo">
+    <div class="logo-icon">G</div>
+    <div class="logo-text">GiáVàng<span>.vn</span></div>
+  </a>
+  <div class="header-tag">
+    <span class="live-dot"></span>
+    Dữ liệu trực tiếp · Cập nhật realtime
   </div>
 </header>
 
-<!-- ===== TICKER ===== -->
-<div class="ticker-wrap" role="marquee" aria-label="Giá vàng trực tiếp">
-  <div class="ticker-live-badge">
-    <span class="ticker-live-dot"></span>
-    <span class="ticker-live-text">TRỰC TIẾP</span>
+<main>
+
+  <!-- Page title -->
+  <div class="page-header">
+    <h1>📊 Giá Vàng & Bạc – Tổng Hợp</h1>
+    <p>Biểu đồ realtime thế giới · Giá bạc Phú Quý cập nhật mỗi 30 phút</p>
   </div>
-  <div class="ticker-divider"></div>
-  <div class="ticker-track">
-    <div class="ticker-inner" id="ticker-inner"></div>
-  </div>
-  <div class="ticker-time-badge" id="ticker-time">--:--:--</div>
-</div>
 
-<!-- ===== APP LAYOUT ===== -->
-<div class="app-layout">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar" aria-label="Menu bên">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Điều Hướng</div>
-      <nav class="sidebar-nav" aria-label="Điều hướng trang">
-        <a href="#prices" class="sn-link active">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" aria-hidden="true">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <line x1="3" y1="9" x2="21" y2="9" />
-            <line x1="9" y1="3" x2="9" y2="21" />
-          </svg>
-          Bảng Giá Thương Hiệu
-        </a>
-        <a href="#compare" class="sn-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" aria-hidden="true">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="2" y1="12" x2="22" y2="12" />
-            <path
-              d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-          </svg>
-          So Sánh Thế Giới
-        </a>
-        <a href="#spread" class="sn-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" aria-hidden="true">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-          </svg>
-          Xếp Hạng Spread %
-        </a>
-        <a href="#chart" class="sn-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" aria-hidden="true">
-            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-            <polyline points="17 6 23 6 23 12" />
-          </svg>
-          Biểu Đồ Lịch Sử
-        </a>
-        <a href="#analysis" class="sn-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" aria-hidden="true">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-          </svg>
-          Phân Tích Hôm Nay
-        </a>
-        <a href="#calculator" class="sn-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" aria-hidden="true">
-            <rect x="4" y="2" width="16" height="20" rx="2" />
-            <line x1="8" y1="6" x2="16" y2="6" />
-            <line x1="8" y1="10" x2="16" y2="10" />
-          </svg>
-          Tính Lời / Lỗ
-        </a>
-        <a href="#alert" class="sn-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" aria-hidden="true">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-          Cảnh Báo Giá
-        </a>
-        <a href="#prediction" class="sn-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" aria-hidden="true">
-            <line x1="18" y1="20" x2="18" y2="10" />
-            <line x1="12" y1="20" x2="12" y2="4" />
-            <line x1="6" y1="20" x2="6" y2="14" />
-            <polyline points="1 20 6 14 12 6 16 10 22 4" />
-          </svg>
-          Dự Đoán Giá
-        </a>
-
-      </nav>
+  <!-- Ticker Tape -->
+  <div class="ticker-wrap">
+    <div class="ticker-label">
+      <span class="live-dot"></span>
+      Giá Thế Giới Trực Tiếp
     </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">Thương Hiệu</div>
-      <div class="brand-quick-links">
-        <a href="#prices" class="bql" data-brand="sjc">🏅 SJC</a>
-        <a href="#prices" class="bql" data-brand="doji">💎 DOJI</a>
-        <a href="#prices" class="bql" data-brand="pnj">💍 PNJ</a>
-        <a href="#prices" class="bql" data-brand="phuquy">⭐ Phú Quý</a>
-        <a href="#prices" class="bql" data-brand="btmc">🌟 Bảo Tín MC</a>
-      </div>
-    </div>
-
-    <div class="sidebar-updated">
-      <div class="blink-dot"><span class="blink"></span></div>
-      <div class="su-text">
-        <span class="su-label">Cập nhật lúc</span>
-        <span class="su-time" id="sidebar-updated-time">--:--</span>
-      </div>
-    </div>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main class="main-content" id="main-content">
-
-    <!-- STAT STRIP -->
-    <div class="stat-strip" id="stat-strip" role="region" aria-label="Tóm tắt giá nhanh">
-      <div class="stat-card" id="sc-vang-mua">
-        <div class="stat-label">🥇 Vàng SJC – Mua</div>
-        <div class="stat-value gold-val" id="sv-mua">89.500</div>
-        <div class="stat-sub">nghìn/chỉ &nbsp;<span class="change-up" id="sv-mua-chg">▲ +200</span></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">🥇 Vàng SJC – Bán</div>
-        <div class="stat-value gold-val" id="sv-ban">91.800</div>
-        <div class="stat-sub">nghìn/chỉ &nbsp;<span class="change-up" id="sv-ban-chg">▲ +150</span></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">🌐 Vàng Thế Giới</div>
-        <div class="stat-value gold-val" id="sv-world">2.940</div>
-        <div class="stat-sub">USD/oz &nbsp;<span class="change-down" id="sv-world-chg">▼ -4.8</span></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">⚪ Bạc 999 – Bán</div>
-        <div class="stat-value silver-val" id="sv-bac">1.050</div>
-        <div class="stat-sub">nghìn/chỉ &nbsp;<span class="change-up">▲ +10</span></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">💱 Tỷ giá USD</div>
-        <div class="stat-value" style="color:#60d4f0" id="sv-usd">25.450</div>
-        <div class="stat-sub">VNĐ/USD &nbsp;<span class="change-up">▲ +50</span></div>
-      </div>
-    </div>
-
-    <!-- ======================================================
- SECTION 1 – BRAND PRICE TABLES
-====================================================== -->
-    <section class="content-section" id="prices" aria-labelledby="prices-title">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon gold-icon" aria-hidden="true">🏪</div>
-          <div>
-            <h2 id="prices-title">Bảng Giá Vàng Hôm Nay</h2>
-            <p class="section-sub">Mua vào · Bán ra · Chênh lệch – Cập nhật liên tục</p>
-          </div>
-        </div>
-        <div class="section-meta" id="last-updated" aria-live="polite"></div>
-      </div>
-
-      <!-- Brand tabs -->
-      <div class="brand-tabs" role="tablist" aria-label="Chọn thương hiệu">
-        <button class="brand-tab active" role="tab" aria-selected="true" data-brand="all"
-                aria-controls="price-panel-all">📊 Tổng hợp</button>
-        <button class="brand-tab" role="tab" aria-selected="false" data-brand="sjc"
-                aria-controls="price-panel-sjc">🏅 SJC</button>
-        <button class="brand-tab" role="tab" aria-selected="false" data-brand="doji"
-                aria-controls="price-panel-doji">💎 DOJI</button>
-        <button class="brand-tab" role="tab" aria-selected="false" data-brand="pnj"
-                aria-controls="price-panel-pnj">💍 PNJ</button>
-        <button class="brand-tab" role="tab" aria-selected="false" data-brand="phuquy"
-                aria-controls="price-panel-phuquy">⭐ Phú Quý</button>
-        <button class="brand-tab" role="tab" aria-selected="false" data-brand="btmc"
-                aria-controls="price-panel-btmc">🌟 Bảo Tín MC</button>
-        <button class="brand-tab silver-tab" role="tab" aria-selected="false" data-brand="bac"
-                aria-controls="price-panel-bac">⚪ Giá Bạc</button>
-      </div>
-
-      <!-- All brands comparison table -->
-      <div id="price-panel-all" class="price-panel" role="tabpanel">
-        <div class="compare-table-wrap">
-          <table class="compare-table" id="compare-table-main"
-                 aria-label="So sánh giá vàng các thương hiệu">
-            <thead>
-            <tr>
-              <th scope="col">Loại Vàng</th>
-              <th scope="colgroup" colspan="2">🏅 SJC</th>
-              <th scope="colgroup" colspan="2">💎 DOJI</th>
-              <th scope="colgroup" colspan="2">💍 PNJ</th>
-              <th scope="colgroup" colspan="2">⭐ Phú Quý</th>
-              <th scope="colgroup" colspan="2">🌟 Bảo Tín</th>
-            </tr>
-            <tr class="sub-header">
-              <th scope="col"></th>
-              <th scope="col">Mua</th>
-              <th scope="col">Bán</th>
-              <th scope="col">Mua</th>
-              <th scope="col">Bán</th>
-              <th scope="col">Mua</th>
-              <th scope="col">Bán</th>
-              <th scope="col">Mua</th>
-              <th scope="col">Bán</th>
-              <th scope="col">Mua</th>
-              <th scope="col">Bán</th>
-            </tr>
-            </thead>
-            <tbody id="compare-table-body"></tbody>
-          </table>
-        </div>
-        <div class="table-note">* Đơn vị: nghìn đồng / chỉ (1 chỉ = 3.75g). Dữ liệu tham khảo.</div>
-      </div>
-
-      <!-- Individual brand panels (filled by JS) -->
-      <div id="price-panel-sjc" class="price-panel" role="tabpanel" style="display:none"></div>
-      <div id="price-panel-doji" class="price-panel" role="tabpanel" style="display:none"></div>
-      <div id="price-panel-pnj" class="price-panel" role="tabpanel" style="display:none"></div>
-      <div id="price-panel-phuquy" class="price-panel" role="tabpanel" style="display:none"></div>
-      <div id="price-panel-btmc" class="price-panel" role="tabpanel" style="display:none"></div>
-      <div id="price-panel-bac" class="price-panel" role="tabpanel" style="display:none"></div>
-    </section>
-
-    <!-- ======================================================
- SECTION 2 – NỘI ĐỊA vs THẾ GIỚI
-====================================================== -->
-    <section class="content-section" id="compare" aria-labelledby="compare-title">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon" style="background:linear-gradient(135deg,#0ea5e9,#0369a1)"
-               aria-hidden="true">🌐</div>
-          <div>
-            <h2 id="compare-title">So Sánh Nội Địa vs Thế Giới</h2>
-            <p class="section-sub">Vàng trong nước đang cao hơn / thấp hơn giá thế giới bao nhiêu %?</p>
-          </div>
-        </div>
-      </div>
-      <div class="compare-world-grid" id="compare-world-grid"></div>
-    </section>
-
-    <!-- ======================================================
- SECTION 3 – SPREAD RANKING
-====================================================== -->
-    <section class="content-section" id="spread" aria-labelledby="spread-title">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon" style="background:linear-gradient(135deg,#22c97a,#15803d)"
-               aria-hidden="true">📈</div>
-          <div>
-            <h2 id="spread-title">Xếp Hạng Spread Từng Thương Hiệu</h2>
-            <p class="section-sub">Spread = (Bán – Mua) / Mua × 100% &nbsp;·&nbsp; Spread thấp = giao
-              dịch có lợi hơn</p>
-          </div>
-        </div>
-      </div>
-      <div class="spread-grid" id="spread-grid" role="list" aria-label="Xếp hạng spread"></div>
-    </section>
-
-    <!-- ======================================================
- SECTION 4 – HISTORY CHART
-====================================================== -->
-    <section class="content-section" id="chart" aria-labelledby="chart-title">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)"
-               aria-hidden="true">📊</div>
-          <div>
-            <h2 id="chart-title">Biểu Đồ Lịch Sử Giá</h2>
-            <p class="section-sub">Theo dõi xu hướng giá vàng, bạc theo thời gian</p>
-          </div>
-        </div>
-      </div>
-      <div class="chart-controls">
-        <div class="chart-type-btns" role="group" aria-label="Chọn loại tài sản">
-          <button class="ct-btn active" data-asset="sjc">Vàng SJC</button>
-          <button class="ct-btn" data-asset="world">Vàng TG (USD)</button>
-          <button class="ct-btn" data-asset="silver">Bạc 999</button>
-        </div>
-        <div class="chart-period-btns" role="group" aria-label="Chọn khoảng thời gian">
-          <button class="cp-btn active" data-days="7">7 ngày</button>
-          <button class="cp-btn" data-days="30">30 ngày</button>
-          <button class="cp-btn" data-days="90">90 ngày</button>
-        </div>
-      </div>
-      <div class="chart-wrapper">
-        <canvas id="priceChart" aria-label="Biểu đồ giá" role="img"></canvas>
-      </div>
-      <div class="chart-legend" id="chart-legend"></div>
-    </section>
-
-    <!-- ======================================================
- SECTION 5 – DAILY ANALYSIS
-====================================================== -->
-    <section class="content-section" id="analysis" aria-labelledby="analysis-title">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon" style="background:linear-gradient(135deg,#f59e0b,#b45309)"
-               aria-hidden="true">📝</div>
-          <div>
-            <h2 id="analysis-title">Phân Tích Ngắn Hôm Nay</h2>
-            <p class="section-sub" id="analysis-date"></p>
-          </div>
-        </div>
-      </div>
-      <div class="analysis-card" id="analysis-card" aria-live="polite"></div>
-    </section>
-
-    <!-- ======================================================
- SECTION 6 – PROFIT CALCULATOR
-====================================================== -->
-    <section class="content-section" id="calculator" aria-labelledby="calc-title">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon" style="background:linear-gradient(135deg,#ec4899,#9d174d)"
-               aria-hidden="true">🧮</div>
-          <div>
-            <h2 id="calc-title">Tính Lời / Lỗ Khi Đầu Tư Vàng</h2>
-            <p class="section-sub">Nhập thông tin để tính lợi nhuận kỳ vọng ngay lập tức</p>
-          </div>
-        </div>
-      </div>
-      <div class="calc-layout">
-        <div class="calc-form">
-          <div class="form-group">
-            <label class="form-label" for="calc-amount">💰 Tổng tiền đầu tư (VNĐ)</label>
-            <input type="number" class="form-input" id="calc-amount" placeholder="100000000"
-                   value="100000000" min="0" aria-describedby="calc-amount-hint" />
-            <div class="input-hint" id="calc-amount-hint">Ví dụ: 100,000,000 = 100 triệu đồng</div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="calc-buy-price">📥 Giá mua vào (nghìn/chỉ)</label>
-            <input type="number" class="form-input" id="calc-buy-price" placeholder="89500"
-                   value="89500" min="0" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="calc-sell-price">📤 Giá bán ra dự kiến (nghìn/chỉ)</label>
-            <input type="number" class="form-input" id="calc-sell-price" placeholder="95000"
-                   value="91800" min="0" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="calc-fee">⚙️ Chi phí / phí giao dịch (%)</label>
-            <input type="number" class="form-input" id="calc-fee" placeholder="0" value="0" min="0"
-                   max="10" step="0.1" />
-          </div>
-          <button class="calc-btn" id="calc-btn">🧮 Tính Ngay</button>
-        </div>
-        <div class="calc-result" id="calc-result">
-          <div class="cr-placeholder">
-            <div class="cr-icon" aria-hidden="true">🧮</div>
-            <div>Nhập thông tin và nhấn "Tính Ngay"</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================
- SECTION 7.5 – DỰ ĐOÁN GIÁ
-====================================================== -->
-    <section class="content-section" id="prediction" aria-labelledby="prediction-title">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon" style="background:linear-gradient(135deg,#06b6d4,#0369a1)"
-               aria-hidden="true">🔮</div>
-          <div>
-            <h2 id="prediction-title">Dự Đoán Giá Vàng & Bạc</h2>
-            <p class="section-sub">Xu hướng ngắn hạn & trung hạn dựa trên phân tích kỹ thuật + vĩ mô</p>
-          </div>
-        </div>
-        <div class="pred-disclaimer">⚠️ Chỉ mang tính tham khảo – không phải khuyến nghị đầu tư</div>
-      </div>
-
-      <!-- Prediction tabs -->
-      <div class="pred-tabs" role="tablist" aria-label="Chọn loại tài sản dự đoán">
-        <button class="pred-tab active" data-pred="vang" role="tab" aria-selected="true">🥇 Vàng
-          SJC</button>
-        <button class="pred-tab" data-pred="bac" role="tab" aria-selected="false">⚪ Bạc 999</button>
-        <button class="pred-tab" data-pred="world" role="tab" aria-selected="false">🌐 Vàng Thế
-          Giới</button>
-      </div>
-
-      <div id="prediction-content" aria-live="polite"></div>
-    </section>
-
-    <!-- ======================================================
- SECTION 7 – PRICE ALERT
-====================================================== -->
-    <section class="content-section" id="alert" aria-labelledby="alert-title">
-      <div class="section-header">
-        <div class="section-title">
-          <div class="section-icon" style="background:linear-gradient(135deg,#f97316,#c2410c)"
-               aria-hidden="true">🔔</div>
-          <div>
-            <h2 id="alert-title">Cảnh Báo Khi Giá Đạt Mốc</h2>
-            <p class="section-sub">Lưu mốc giá mong muốn – hệ thống sẽ kiểm tra khi cập nhật</p>
-          </div>
-        </div>
-      </div>
-      <div class="alert-layout">
-        <div class="alert-form">
-          <div class="form-group">
-            <label class="form-label" for="alert-asset">📦 Loại tài sản</label>
-            <select class="form-input" id="alert-asset">
-              <option value="vang_sjc">Vàng miếng SJC</option>
-              <option value="vang_nhan">Vàng nhẫn 9999</option>
-              <option value="bac">Bạc 999</option>
-              <option value="world">Vàng thế giới (USD/oz)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="alert-type">📍 Kiểu cảnh báo</label>
-            <select class="form-input" id="alert-type">
-              <option value="above">📈 Giá vượt lên trên mốc</option>
-              <option value="below">📉 Giá giảm xuống dưới mốc</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="alert-price">🎯 Mốc giá mục tiêu</label>
-            <input type="number" class="form-input" id="alert-price" placeholder="Ví dụ: 90000"
-                   min="0" />
-            <div class="input-hint">Đơn vị: nghìn/chỉ (hoặc USD/oz cho vàng thế giới)</div>
-          </div>
-          <button class="calc-btn alert-submit-btn" id="alert-btn">🔔 Đặt Cảnh Báo</button>
-        </div>
-        <div class="alert-list-wrap">
-          <div class="al-header">
-            <div class="al-title">📋 Danh sách cảnh báo đã đặt</div>
-            <button class="al-clear-btn" id="alert-clear-all">Xoá tất cả</button>
-          </div>
-          <div id="alert-list" class="alert-list" role="list" aria-label="Danh sách cảnh báo">
-            <div class="al-empty">Chưa có cảnh báo nào. Đặt mốc ở bên trái!</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main><!-- /main-content -->
-</div><!-- /app-layout -->
-
-<!-- ===== FOOTER ===== -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-top">
-      <div class="footer-brand-col">
-        <a href="/" class="logo" style="margin-bottom:10px">
-          <div class="logo-icon">G</div>
-          <div class="logo-text" style="font-size:18px">GiáVàng<span>.vn</span></div>
-        </a>
-        <p class="footer-desc">Tổng hợp giá vàng, bạc từ các thương hiệu lớn tại Việt Nam cập nhật liên tục.
-          Công cụ so sánh spread, biểu đồ lịch sử và tính lời lỗ miễn phí.</p>
-        <div class="footer-live"><span class="blink"></span> Dữ liệu cập nhật mỗi 5 phút</div>
-      </div>
-      <div class="footer-links">
-        <div class="fl-group">
-          <div class="fl-title">Giá Theo Thương Hiệu</div>
-          <a href="/gia-vang-sjc-hom-nay">Giá vàng SJC hôm nay</a>
-          <a href="/gia-vang-doji-hom-nay">Giá vàng DOJI hôm nay</a>
-          <a href="/gia-vang-pnj-hom-nay">Giá vàng PNJ hôm nay</a>
-          <a href="/gia-vang-phu-quy-hom-nay">Giá vàng Phú Quý</a>
-          <a href="/gia-vang-bao-tin-minh-chau">Bảo Tín Minh Châu</a>
-        </div>
-        <div class="fl-group">
-          <div class="fl-title">Giá Bạc</div>
-          <a href="/gia-bac-999-hom-nay">Giá bạc 999 hôm nay</a>
-          <a href="/gia-bac-sjc-hom-nay">Giá bạc SJC hôm nay</a>
-          <a href="/gia-vang-the-gioi">Vàng thế giới (XAU/USD)</a>
-          <a href="/gia-bac-the-gioi">Bạc thế giới (XAG/USD)</a>
-        </div>
-        <div class="fl-group">
-          <div class="fl-title">Công Cụ</div>
-          <a href="#calculator">Tính lời lỗ vàng</a>
-          <a href="#spread">So sánh spread %</a>
-          <a href="#chart">Biểu đồ lịch sử giá</a>
-          <a href="#compare">Nội địa vs thế giới</a>
-          <a href="#alert">Cảnh báo khi đạt mốc</a>
-        </div>
-        <div class="fl-group">
-          <div class="fl-title">Nguồn Dữ Liệu</div>
-          <a href="https://sjc.com.vn" target="_blank" rel="noopener noreferrer">sjc.com.vn ↗</a>
-          <a href="https://doji.vn" target="_blank" rel="noopener noreferrer">doji.vn ↗</a>
-          <a href="https://pnj.com.vn" target="_blank" rel="noopener noreferrer">pnj.com.vn ↗</a>
-          <a href="https://baotinminhchau.com" target="_blank"
-             rel="noopener noreferrer">baotinminhchau.com ↗</a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>⚠️ Giá hiển thị mang tính tham khảo. Vui lòng xác nhận tại cửa hàng trước khi giao dịch. Chúng tôi
-        không chịu trách nhiệm về sai lệch giá.</p>
-      <p>© 2026 <strong>GiáVàng.vn</strong> – Tổng hợp giá vàng bạc Việt Nam · Designed with ❤️ in Vietnam</p>
+    <div class="tradingview-widget-container ticker-tv">
+      <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js">
+        {
+          "symbols": [
+            {"proName": "OANDA:XAUUSD",  "title": "Vàng – Gold"},
+            {"proName": "OANDA:XAGUSD",  "title": "Bạc – Silver"},
+            {"proName": "FX_IDC:USDVND", "title": "USD/VND"},
+            {"proName": "COMEX:GC1!",    "title": "Gold Futures"},
+            {"proName": "COMEX:SI1!",    "title": "Silver Futures"}
+          ],
+          "showSymbolLogo": true,
+          "colorTheme": "dark",
+          "isTransparent": true,
+          "displayMode": "adaptive",
+          "locale": "vi"
+        }
+      </script>
     </div>
   </div>
-</footer>
 
-<!-- Back to top -->
-<button class="back-to-top" id="back-to-top" aria-label="Về đầu trang">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-       aria-hidden="true">
-    <polyline points="18 15 12 9 6 15" />
-  </svg>
-</button>
+  <!-- ── SECTION 1: TradingView Live Charts ───────────── -->
+  
 
-<script src="{{ asset('frontend/js/index.js') }}"></script>
+    <!-- ══ SECTION: Giá Vàng & Bạc Thế Giới ══ -->
+  <section class="world-charts-section">
+    <div class="wc-header">
+      <div class="wc-header-icon">🌍</div>
+      <div>
+        <h2>Giá Vàng & Bạc Thế Giới</h2>
+        <p>Biểu đồ realtime từ TradingView · Đơn vị USD/oz</p>
+      </div>
+    </div>
+    <div class="world-charts-grid">
+      <!-- Gold XAU/USD -->
+      <div class="world-chart-card">
+        <div class="wc-card-label">
+          <span class="wc-dot" style="background:#f59e0b"></span> Vàng – XAU/USD
+        </div>
+        <div class="wc-widget-wrap">
+          <div class="tradingview-widget-container" id="tv-gold">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+            {
+              "symbol": "OANDA:XAUUSD",
+              "width": "100%",
+              "height": "100%",
+              "locale": "vi",
+              "dateRange": "1D",
+              "colorTheme": "dark",
+              "isTransparent": true,
+              "autosize": true,
+              "largeChartUrl": "",
+              "noTimeScale": false
+            }
+            </script>
+          </div>
+        </div>
+      </div>
+      <!-- Silver XAG/USD -->
+      <div class="world-chart-card">
+        <div class="wc-card-label">
+          <span class="wc-dot" style="background:#94a3b8"></span> Bạc – XAG/USD
+        </div>
+        <div class="wc-widget-wrap">
+          <div class="tradingview-widget-container" id="tv-silver">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+            {
+              "symbol": "OANDA:XAGUSD",
+              "width": "100%",
+              "height": "100%",
+              "locale": "vi",
+              "dateRange": "1D",
+              "colorTheme": "dark",
+              "isTransparent": true,
+              "autosize": true,
+              "largeChartUrl": "",
+              "noTimeScale": false
+            }
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ BẠC THƯƠNG HIỆU: Compact 3-column ══ -->
+  <section class="sv-compact-section">
+
+    <div class="sv-section-head">
+      <div class="sv-section-icon">🥈</div>
+      <div>
+        <h2>Giá Bạc Thương Hiệu</h2>
+        <p>Phú Quý · Ancarat · DOJI · Cập nhật mỗi 30 phút</p>
+      </div>
+    </div>
+
+    <!-- 3 Brand Cards -->
+    <div class="sv-brands-grid">
+
+      <!-- Phú Quý -->
+      <div class="sv-brand-card" id="sv-card-phuquy" data-brand="phuquy">
+        <div class="sv-card-head">
+          <div class="sv-card-logo" style="background:linear-gradient(135deg,#b0bec5,#546e7a)">🥈</div>
+          <div class="sv-card-info">
+            <div class="sv-card-name">Phú Quý 999</div>
+            <div class="sv-card-sub" id="pq-updated">Đang tải...</div>
+          </div>
+        </div>
+        <div class="sv-card-tabs">
+          <button class="sv-tab active" data-brand="phuquy" data-unit="CHI" data-mult="1">Chỉ</button>
+          <button class="sv-tab" data-brand="phuquy" data-unit="LUONG" data-mult="1">Lượng</button>
+          <button class="sv-tab" data-brand="phuquy" data-unit="KG" data-mult="1">KG</button>
+        </div>
+        <div class="sv-card-prices">
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Mua vào</div>
+            <div class="sv-cprice-buy" id="pq-buy">–</div>
+          </div>
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Bán ra</div>
+            <div class="sv-cprice-sell" id="pq-sell">–</div>
+          </div>
+          <div class="sv-card-pct" id="pq-pct">–</div>
+        </div>
+        <div class="sv-card-pct-days" id="pq-pct-days">7 ngày</div>
+      </div>
+
+      <!-- Ancarat -->
+      <div class="sv-brand-card" id="sv-card-ancarat" data-brand="ancarat">
+        <div class="sv-card-head">
+          <div class="sv-card-logo" style="background:linear-gradient(135deg,#06b6d4,#0284c7)">🏅</div>
+          <div class="sv-card-info">
+            <div class="sv-card-name">Bạc 999 – Ancarat</div>
+            <div class="sv-card-sub" id="ac-updated">Đang tải...</div>
+          </div>
+        </div>
+        <div class="sv-card-tabs">
+          <button class="sv-tab active" data-brand="ancarat" data-unit="LUONG" data-mult="1">Lượng</button>
+          <button class="sv-tab" data-brand="ancarat" data-unit="KG" data-mult="1">KG</button>
+        </div>
+        <div class="sv-card-prices">
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Mua vào</div>
+            <div class="sv-cprice-buy" id="ac-buy">–</div>
+          </div>
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Bán ra</div>
+            <div class="sv-cprice-sell" id="ac-sell">–</div>
+          </div>
+          <div class="sv-card-pct" id="ac-pct">–</div>
+        </div>
+        <div class="sv-card-pct-days" id="ac-pct-days">7 ngày</div>
+      </div>
+
+      <!-- DOJI -->
+      <div class="sv-brand-card" id="sv-card-doji" data-brand="doji">
+        <div class="sv-card-head">
+          <div class="sv-card-logo" style="background:linear-gradient(135deg,#dc2626,#991b1b)">🔴</div>
+          <div class="sv-card-info">
+            <div class="sv-card-name">Bạc 99.9 – DOJI</div>
+            <div class="sv-card-sub" id="dj-updated">Đang tải...</div>
+          </div>
+        </div>
+        <div class="sv-card-tabs">
+          <button class="sv-tab active" data-brand="doji" data-unit="LUONG" data-mult="1">1 Lượng</button>
+          <button class="sv-tab" data-brand="doji" data-unit="LUONG" data-mult="5">5 Lượng</button>
+        </div>
+        <div class="sv-card-prices">
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Mua vào</div>
+            <div class="sv-cprice-buy" id="dj-buy">–</div>
+          </div>
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Bán ra</div>
+            <div class="sv-cprice-sell" id="dj-sell">–</div>
+          </div>
+          <div class="sv-card-pct" id="dj-pct">–</div>
+        </div>
+        <div class="sv-card-pct-days" id="dj-pct-days">7 ngày</div>
+      </div>
+
+    </div><!-- /sv-brands-grid -->
+
+    <!-- Shared Chart -->
+    <div class="sv-shared-chart-wrap">
+      <div class="sv-shared-chart-bar">
+        <div class="sv-chart-brand-tabs">
+          <button class="sv-chart-brand active" data-brand="phuquy">Phú Quý</button>
+          <button class="sv-chart-brand" data-brand="ancarat">Ancarat</button>
+          <button class="sv-chart-brand" data-brand="doji">DOJI</button>
+        </div>
+        <div class="sv-chart-period-tabs">
+          <button class="sv-prd active" data-days="7">7D</button>
+          <button class="sv-prd" data-days="30">1M</button>
+          <button class="sv-prd" data-days="90">3M</button>
+          <button class="sv-prd" data-days="365">1Y</button>
+        </div>
+        <span class="sv-chart-unit-label" id="sv-chart-unit-lbl">VND/Chỉ</span>
+      </div>
+      <div class="sv-shared-canvas-wrap">
+        <div class="sv-loading" id="sv-chart-loading">
+          <div class="sv-spinner"></div> Đang tải biểu đồ...
+        </div>
+        <canvas id="svSharedChart" style="display:none"></canvas>
+      </div>
+    </div>
+
+    <p class="sv-footnote">⚠️ Giá tham khảo · Xác nhận từ nguồn chính thức trước khi giao dịch · © 2026 GiáVàng.vn</p>
+
+  </section>
+
+</main>
+
+
+
+
+
+
+
+
+<script>
+/* ══════════════════════════════════════════════════
+   SILVER BRANDS: Unified controller
+   brands: phuquy | ancarat | doji
+══════════════════════════════════════════════════ */
+(function () {
+  const API = {
+    phuquy:  { current: '/api/silver/current',  history: '/api/silver/history',  percent: '/api/silver/percent'  },
+    ancarat: { current: '/api/ancarat/current', history: '/api/ancarat/history', percent: '/api/ancarat/percent' },
+    doji:    { current: '/api/doji/current',    history: '/api/doji/history',    percent: '/api/doji/percent'    },
+  };
+
+  // Active state
+  let activeBrand = 'phuquy';
+  let activePeriod = 7;
+  const brandUnit = { phuquy: 'CHI', ancarat: 'LUONG', doji: 'LUONG' };
+  const brandMult = { phuquy: 1, ancarat: 1, doji: 1 };
+
+  let sharedChart = null;
+
+  function fmt(n) { return Number(n).toLocaleString('vi-VN'); }
+
+  /* ── Element ID map per brand ── */
+  const ELIDS = {
+    phuquy:  { buy: 'pq-buy',  sell: 'pq-sell',  updated: 'pq-updated',  pct: 'pq-pct',  pctDays: 'pq-pct-days'  },
+    ancarat: { buy: 'ac-buy',  sell: 'ac-sell',  updated: 'ac-updated',  pct: 'ac-pct',  pctDays: 'ac-pct-days'  },
+    doji:    { buy: 'dj-buy',  sell: 'dj-sell',  updated: 'dj-updated',  pct: 'dj-pct',  pctDays: 'dj-pct-days'  },
+  };
+
+  /* ── Load current price for one brand ── */
+  function loadBrandPrice(brand) {
+    var unit = brandUnit[brand];
+    var mult = brandMult[brand];
+    var ids  = ELIDS[brand];
+    fetch(API[brand].current)
+      .then(function(r) { return r.json(); })
+      .then(function(json) {
+        if (!json.success || !json.data) return;
+        var d = json.data[unit];
+        if (!d) return;
+        document.getElementById(ids.buy).textContent     = fmt(d.buy_price  * mult);
+        document.getElementById(ids.sell).textContent    = fmt(d.sell_price * mult);
+        document.getElementById(ids.updated).textContent = d.recorded_at || '';
+      })
+      .catch(function(){});
+  }
+
+  /* ── Load % change for one brand ── */
+  function loadBrandPct(brand, days) {
+    var unit      = brandUnit[brand];
+    var ids       = ELIDS[brand];
+    fetch(API[brand].percent + '?days=' + days + '&type=' + unit)
+      .then(function(r) { return r.json(); })
+      .then(function(json) {
+        var pctEl     = document.getElementById(ids.pct);
+        var pctDaysEl = document.getElementById(ids.pctDays);
+        if (!json.success || json.percent === null) { pctEl.textContent = '–'; pctEl.className = 'sv-card-pct'; return; }
+        var sign = json.trend === 'up' ? '▲ +' : (json.trend === 'down' ? '▼ -' : '');
+        pctEl.textContent = sign + json.percent + '%';
+        pctEl.className = 'sv-card-pct ' + (json.trend === 'up' ? 'up' : 'down');
+        if (pctDaysEl) pctDaysEl.textContent = days + ' ngày qua';
+      }).catch(function(){});
+  }
+
+  /* ── Load shared chart ── */
+  function loadSharedChart() {
+    var brand  = activeBrand;
+    var unit   = brandUnit[brand];
+    var mult   = brandMult[brand];
+    var days   = activePeriod;
+    var loading = document.getElementById('sv-chart-loading');
+    var canvas  = document.getElementById('svSharedChart');
+    loading.style.display = 'flex'; canvas.style.display = 'none';
+
+    fetch(API[brand].history + '?days=' + days + '&type=' + unit)
+      .then(function(r) { return r.json(); })
+      .then(function(json) {
+        loading.style.display = 'none';
+        if (!json.success || !json.data || json.data.dates.length === 0) {
+          loading.innerHTML = '<span style="color:var(--muted);font-size:12px">Chưa có dữ liệu lịch sử</span>';
+          loading.style.display = 'flex'; return;
+        }
+        canvas.style.display = 'block';
+
+        var lbl = json.type_label || unit;
+        if (mult > 1) lbl = 'VND/' + mult + ' Lượng';
+        document.getElementById('sv-chart-unit-lbl').textContent = lbl;
+
+        var buys  = json.data.buy_prices.map(function(v)  { return v * mult; });
+        var sells = json.data.sell_prices.map(function(v) { return v * mult; });
+
+        if (sharedChart) { sharedChart.destroy(); }
+        sharedChart = new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels: json.data.dates,
+            datasets: [
+              { label: 'Giá bán ra',  data: sells, borderColor: '#4f7af8', backgroundColor: 'rgba(79,122,248,0.06)',  borderWidth: 2, pointRadius: json.data.dates.length <= 15 ? 3 : 1.5, pointHoverRadius: 5, fill: true, tension: 0.38 },
+              { label: 'Giá mua vào', data: buys,  borderColor: '#22c97a', backgroundColor: 'rgba(34,201,122,0.08)',  borderWidth: 2, pointRadius: json.data.dates.length <= 15 ? 3 : 1.5, pointHoverRadius: 5, fill: true, tension: 0.38 }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { labels: { color: '#909ab2', font: { size: 11, family:'Inter' }, usePointStyle:true, pointStyleWidth:8 } },
+              tooltip: { backgroundColor:'rgba(13,16,24,0.96)', borderColor:'rgba(176,190,197,0.2)', borderWidth:1,
+                titleColor:'#e4e8f2', bodyColor:'#909ab2', padding:10,
+                callbacks: { label: function(ctx){ return ' ' + ctx.dataset.label + ': ' + Number(ctx.raw).toLocaleString('vi-VN') + ' đ'; } }
+              }
+            },
+            scales: {
+              x: { grid:{ color:'rgba(255,255,255,0.04)' }, ticks:{ color:'#6e778c', font:{ size:10 }, maxTicksLimit:10 } },
+              y: { grid:{ color:'rgba(255,255,255,0.04)' },
+                ticks:{ color:'#6e778c', font:{ size:10 }, callback:function(v){ return Number(v).toLocaleString('vi-VN'); } },
+                title:{ display:true, text:lbl, color:'#6e778c', font:{ size:10 } }
+              }
+            }
+          }
+        });
+      })
+      .catch(function() {
+        loading.style.display='flex';
+        loading.innerHTML='<span style="color:var(--red);font-size:12px">Lỗi tải biểu đồ</span>';
+      });
+  }
+
+  /* ── Load all current prices ── */
+  function loadAllPrices() {
+    ['phuquy','ancarat','doji'].forEach(function(b) {
+      loadBrandPrice(b);
+      loadBrandPct(b, activePeriod);
+    });
+  }
+
+  /* ── Unit tab click inside card ── */
+  document.querySelectorAll('.sv-tab').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var brand = btn.dataset.brand;
+      var unit  = btn.dataset.unit;
+      var mult  = parseInt(btn.dataset.mult) || 1;
+      // Deactivate other tabs in same card
+      document.querySelectorAll('.sv-tab[data-brand="' + brand + '"]').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      brandUnit[brand] = unit;
+      brandMult[brand] = mult;
+      loadBrandPrice(brand);
+      loadBrandPct(brand, activePeriod);
+      if (activeBrand === brand) loadSharedChart();
+    });
+  });
+
+  /* ── Brand card click → switch chart ── */
+  document.querySelectorAll('.sv-brand-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      document.querySelectorAll('.sv-brand-card').forEach(function(c){ c.classList.remove('active'); });
+      card.classList.add('active');
+      activeBrand = card.dataset.brand;
+      // Sync chart brand tab
+      document.querySelectorAll('.sv-chart-brand').forEach(function(b){ b.classList.remove('active'); });
+      var chartTab = document.querySelector('.sv-chart-brand[data-brand="' + activeBrand + '"]');
+      if (chartTab) chartTab.classList.add('active');
+      loadSharedChart();
+    });
+  });
+
+  /* ── Chart brand tab click ── */
+  document.querySelectorAll('.sv-chart-brand').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.sv-chart-brand').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      activeBrand = btn.dataset.brand;
+      // Sync card active
+      document.querySelectorAll('.sv-brand-card').forEach(function(c){ c.classList.remove('active'); });
+      var card = document.getElementById('sv-card-' + activeBrand);
+      if (card) card.classList.add('active');
+      loadSharedChart();
+    });
+  });
+
+  /* ── Period buttons ── */
+  document.querySelectorAll('.sv-prd').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.sv-prd').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      activePeriod = parseInt(btn.dataset.days);
+      // Reload all pct + chart
+      ['phuquy','ancarat','doji'].forEach(function(b){ loadBrandPct(b, activePeriod); });
+      loadSharedChart();
+    });
+  });
+
+  /* ── Init ── */
+  // Set first card active
+  var firstCard = document.getElementById('sv-card-phuquy');
+  if (firstCard) firstCard.classList.add('active');
+
+  loadAllPrices();
+  loadSharedChart();
+  setInterval(function() { loadAllPrices(); loadSharedChart(); }, 30 * 60 * 1000);
+
+})();
+</script>
+
 </body>
-
 </html>

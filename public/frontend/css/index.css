@@ -1413,6 +1413,244 @@ header {
   flex-wrap: wrap;
 }
 
+/* ── TRADINGVIEW WIDGETS ─────────────────────────── */
+
+/* Ticker Tape Frame */
+.tv-ticker-frame {
+  background: var(--bg2);
+  border: 1px solid rgba(245, 197, 24, 0.18);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(245, 197, 24, 0.06), var(--shadow-sm);
+  margin-bottom: 0;
+}
+
+.tv-ticker-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: linear-gradient(90deg, rgba(245,197,24,0.08), transparent);
+  border-bottom: 1px solid rgba(245, 197, 24, 0.1);
+}
+
+.tv-live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: blink 1.3s infinite;
+  flex-shrink: 0;
+}
+
+.tv-ticker-container {
+  min-height: 46px;
+  width: 100%;
+}
+
+/* Charts Section */
+.tv-charts-section {
+  margin-top: 32px;
+}
+
+.tv-charts-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 0 2px;
+}
+
+.tv-charts-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(245, 197, 24, 0.5));
+}
+
+.tv-charts-heading h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.tv-charts-heading p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Grid */
+.tv-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .tv-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Chart Card Base */
+.tv-chart-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+
+.tv-chart-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Gold Card */
+.tv-card-gold {
+  border-color: rgba(245, 197, 24, 0.2);
+  box-shadow: 0 0 0 1px rgba(245, 197, 24, 0.06), var(--shadow-sm);
+}
+
+.tv-card-gold:hover {
+  border-color: rgba(245, 197, 24, 0.4);
+  box-shadow: 0 8px 32px rgba(245, 197, 24, 0.12), 0 0 0 1px rgba(245, 197, 24, 0.15);
+}
+
+/* Silver Card */
+.tv-card-silver {
+  border-color: rgba(176, 190, 197, 0.2);
+  box-shadow: 0 0 0 1px rgba(176, 190, 197, 0.06), var(--shadow-sm);
+}
+
+.tv-card-silver:hover {
+  border-color: rgba(176, 190, 197, 0.4);
+  box-shadow: 0 8px 32px rgba(176, 190, 197, 0.1), 0 0 0 1px rgba(176, 190, 197, 0.15);
+}
+
+/* Card Header */
+.tv-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tv-card-gold .tv-card-header {
+  background: linear-gradient(90deg, rgba(245,197,24,0.1), rgba(245,197,24,0.03), transparent);
+  border-bottom-color: rgba(245, 197, 24, 0.12);
+}
+
+.tv-card-silver .tv-card-header {
+  background: linear-gradient(90deg, rgba(176,190,197,0.08), rgba(176,190,197,0.02), transparent);
+  border-bottom-color: rgba(176, 190, 197, 0.1);
+}
+
+.tv-card-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.tv-badge-gold {
+  background: linear-gradient(135deg, rgba(245,197,24,0.25), rgba(245,197,24,0.08));
+  border: 1px solid rgba(245, 197, 24, 0.25);
+  box-shadow: 0 0 12px rgba(245, 197, 24, 0.15);
+}
+
+.tv-badge-silver {
+  background: linear-gradient(135deg, rgba(176,190,197,0.2), rgba(176,190,197,0.06));
+  border: 1px solid rgba(176, 190, 197, 0.2);
+  box-shadow: 0 0 12px rgba(176, 190, 197, 0.1);
+}
+
+.tv-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tv-card-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+
+.tv-card-gold .tv-card-name {
+  color: var(--gold2);
+}
+
+.tv-card-silver .tv-card-name {
+  color: var(--silver2);
+}
+
+.tv-card-symbol {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.02em;
+}
+
+.tv-card-powered {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.tv-card-powered span {
+  display: block;
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tv-card-powered strong {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: -0.2px;
+}
+
+/* Chart Body */
+.tv-chart-body {
+  width: 100%;
+}
+
+.tv-chart-container {
+  width: 100%;
+  height: 500px;
+  display: block;
+}
+
+.tv-chart-container > div {
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure TradingView iframe fills the container */
+.tv-chart-container .tradingview-widget-container__widget,
+.tv-chart-container iframe {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .cl-item {
   display: flex;
   align-items: center;
