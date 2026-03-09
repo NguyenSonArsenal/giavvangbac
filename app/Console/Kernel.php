@@ -7,7 +7,13 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
+	protected $commands = [
+		\App\Console\Commands\FetchPhuQuySilverPrice::class,
+		\App\Console\Commands\FetchAncaratSilverPrice::class,
+		\App\Console\Commands\FetchDojiSilverPrice::class,
+	];
+
+	/**
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
@@ -15,9 +21,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('silver:fetch-phuquy')->everyThirtyMinutes();
-        $schedule->command('silver:fetch-ancarat')->everyThirtyMinutes();
-        $schedule->command('silver:fetch-doji')->everyThirtyMinutes();
+        $schedule->command('silver:fetch-phuquy')->everyThirtyMinutes()->withoutOverlapping();;
+        $schedule->command('silver:fetch-ancarat')->everyThirtyMinutes()->withoutOverlapping();;
+        $schedule->command('silver:fetch-doji')->everyThirtyMinutes()->withoutOverlapping();;
     }
 
     /**
@@ -27,7 +33,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+//        $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
     }
