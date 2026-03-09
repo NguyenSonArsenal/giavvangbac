@@ -183,9 +183,9 @@
     .card-chart .tradingview-widget-container { width:100%; height:100%; }
     .card-chart .tradingview-widget-container__widget { width:100%; height:calc(100% - 32px); }
 
-    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
        SILVER PRICE SECTION
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
     .silver-section {
       background: var(--bg2);
       border: 1px solid rgba(176,190,197,0.18);
@@ -740,7 +740,8 @@
           <button class="sv-chart-brand" data-brand="doji">DOJI</button>
         </div>
         <div class="sv-chart-period-tabs">
-          <button class="sv-prd active" data-days="7">7D</button>
+          <button class="sv-prd active" data-days="1">1D</button>
+          <button class="sv-prd" data-days="7">7D</button>
           <button class="sv-prd" data-days="30">1M</button>
           <button class="sv-prd" data-days="90">3M</button>
           <button class="sv-prd" data-days="365">1Y</button>
@@ -782,7 +783,7 @@
 
   // Active state
   let activeBrand = 'phuquy';
-  let activePeriod = 7;
+  let activePeriod = 1;
   const brandUnit = { phuquy: 'CHI', ancarat: 'LUONG', doji: 'LUONG' };
   const brandMult = { phuquy: 1, ancarat: 1, doji: 1 };
 

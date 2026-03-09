@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\SilverPrice;
 use App\Models\SilverPriceHistory;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
@@ -51,28 +50,14 @@ class FetchDojiSilverPrice extends Command
                 $last = end($rows);
                 [$buy, $sell, $datetime] = $last;
 
-                // 1. Cập nhật current price
-                $productName = $unit === 'LUONG' ? 'BẠC DOJI 99.9 - 1 LƯỢNG' : 'BẠC DOJI 99.9 - 1 KILOGRAM';
-                SilverPrice::updateOrCreate(
-                    ['source' => 'doji', 'unit' => $unit],
-                    [
-                        'product_name' => $productName,
-                        'buy_price'    => $buy,
-                        'sell_price'   => $sell,
-                        'recorded_at'  => now(),
-                    ]
-                );
-                $this->info("  ✅ [{$unit}] Mua: " . number_format($buy) . ' | Bán: ' . number_format($sell));
-
-                // 2. Lưu history: chỉ lưu nếu chưa có trong 25 phút
-                $threshold = now()->subMinutes(25);
-                $exists = SilverPriceHistory::where('source', 'doji')
+                // Lưu history – dedup theo giá (1 bảng duy nhất)
+                $lastRecord = SilverPriceHistory::where('source', 'doji')
                     ->where('unit', $unit)
-                    ->where('recorded_at', '>=', $threshold)
-                    ->exists();
+                    ->orderByDesc('recorded_at')
+                    ->first();
 
-                if ($exists) {
-                    $this->line("  ⏭  History [{$unit}] đã có trong 25 phút, bỏ qua");
+                if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
+                    $this->line("  ⏭  History [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua');
                     continue;
                 }
 
@@ -84,7 +69,7 @@ class FetchDojiSilverPrice extends Command
                     'price_date'  => now()->toDateString(),
                     'recorded_at' => now(),
                 ]);
-                $this->info("  ✅ History [{$unit}] saved");
+                $this->info("  ✅ History [{$unit}] saved (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ')');
 
             } catch (\Exception $e) {
                 $this->error("  💥 [{$unit}]: " . $e->getMessage());

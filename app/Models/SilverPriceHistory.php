@@ -44,4 +44,17 @@ class SilverPriceHistory extends Model
                 return $group->last(); // 1 điểm / ngày (bản ghi cuối)
             });
     }
+
+    /**
+     * Lấy tất cả bản ghi trong ngày hôm nay (intraday) để vẽ chart 1D.
+     * Không group by ngày, trả về từng điểm theo giờ:phút.
+     */
+    public static function getIntradayHistory(string $source, string $unit): \Illuminate\Support\Collection
+    {
+        return static::where('source', $source)
+            ->where('unit', $unit)
+            ->where('recorded_at', '>=', now()->startOfDay())
+            ->orderBy('recorded_at')
+            ->get();
+    }
 }

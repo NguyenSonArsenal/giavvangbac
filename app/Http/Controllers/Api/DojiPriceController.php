@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\SilverPrice;
 use App\Models\SilverPriceHistory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,12 +11,34 @@ class DojiPriceController extends Controller
 {
     /**
      * GET /api/doji/current
+     * Lấy record mới nhất mỗi unit từ silver_price_history
      */
     public function currentPrice(): JsonResponse
     {
-        $prices = SilverPrice::where('source', 'doji')->get();
+        $units  = ['LUONG'];  // DOJI chỉ có Lượng
+        $byUnit = [];
 
-        if ($prices->isEmpty()) {
+        foreach ($units as $unit) {
+            $latest = SilverPriceHistory::where('source', 'doji')
+                ->where('unit', $unit)
+                ->orderByDesc('recorded_at')
+                ->first();
+
+            if (!$latest) {
+                continue;
+            }
+
+            $byUnit[$unit] = [
+                'unit'           => $unit,
+                'buy_price'      => $latest->buy_price,
+                'sell_price'     => $latest->sell_price,
+                'buy_formatted'  => number_format($latest->buy_price),
+                'sell_formatted' => number_format($latest->sell_price),
+                'recorded_at'    => $latest->recorded_at ? $latest->recorded_at->format('d/m/Y H:i') : null,
+            ];
+        }
+
+        if (empty($byUnit)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Chưa có dữ liệu. Chạy: php artisan silver:fetch-doji',
@@ -25,26 +46,15 @@ class DojiPriceController extends Controller
             ], 404);
         }
 
-        $byUnit = [];
-        foreach ($prices as $p) {
-            $byUnit[$p->unit] = [
-                'unit'           => $p->unit,
-                'product_name'   => $p->product_name,
-                'buy_price'      => $p->buy_price,
-                'sell_price'     => $p->sell_price,
-                'buy_formatted'  => number_format($p->buy_price),
-                'sell_formatted' => number_format($p->sell_price),
-                'recorded_at'    => $p->recorded_at ? $p->recorded_at->format('d/m/Y H:i') : null,
-            ];
-        }
-
-        $latest = SilverPrice::where('source', 'doji')->orderByDesc('recorded_at')->first();
+        $latestAny = SilverPriceHistory::where('source', 'doji')
+            ->orderByDesc('recorded_at')
+            ->first();
 
         return response()->json([
             'success'    => true,
             'source'     => 'doji',
-            'updated_at' => $latest && $latest->recorded_at
-                ? $latest->recorded_at->format('H:i d/m/Y') : null,
+            'updated_at' => $latestAny && $latestAny->recorded_at
+                ? $latestAny->recorded_at->format('H:i d/m/Y') : null,
             'data'       => $byUnit,
         ]);
     }
@@ -52,6 +62,7 @@ class DojiPriceController extends Controller
     /**
      * GET /api/doji/history?days=7&type=LUONG
      * type: LUONG | KG
+     * days=1 → intraday (tất cả điểm trong ngày hôm nay, nhãn HH:MM)
      */
     public function history(Request $request): JsonResponse
     {
@@ -61,6 +72,41 @@ class DojiPriceController extends Controller
         $days = max(1, min(365, $days));
         $unit = in_array($unit, ['LUONG', 'KG']) ? $unit : 'LUONG';
 
+        $labelMap = ['LUONG' => 'VND/Lượng', 'KG' => 'VND/Kilogram'];
+
+        // ── 1D: intraday ──
+        if ($days === 1) {
+            $history = SilverPriceHistory::getIntradayHistory('doji', $unit);
+
+            if ($history->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Chưa có dữ liệu trong ngày hôm nay.',
+                    'data'    => ['dates' => [], 'buy_prices' => [], 'sell_prices' => []],
+                ]);
+            }
+
+            $dates = $buyPrices = $sellPrices = [];
+            foreach ($history as $record) {
+                $dates[]      = $record->recorded_at->format('H:i');
+                $buyPrices[]  = $record->buy_price;
+                $sellPrices[] = $record->sell_price;
+            }
+
+            return response()->json([
+                'success'    => true,
+                'unit'       => $unit,
+                'days'       => 1,
+                'type_label' => $labelMap[$unit] ?? $unit,
+                'data'       => [
+                    'dates'       => $dates,
+                    'buy_prices'  => $buyPrices,
+                    'sell_prices' => $sellPrices,
+                ],
+            ]);
+        }
+
+        // ── Multi-day ──
         $history = SilverPriceHistory::getHistory('doji', $unit, $days);
 
         if ($history->isEmpty()) {
@@ -80,8 +126,6 @@ class DojiPriceController extends Controller
             $buyPrices[]  = $record->buy_price;
             $sellPrices[] = $record->sell_price;
         }
-
-        $labelMap = ['LUONG' => 'VND/Lượng', 'KG' => 'VND/Kilogram'];
 
         return response()->json([
             'success'    => true,

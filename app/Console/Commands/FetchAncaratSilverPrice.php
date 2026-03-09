@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\SilverPrice;
 use App\Models\SilverPriceHistory;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
@@ -15,15 +14,7 @@ class FetchAncaratSilverPrice extends Command
 
     const API_URL = 'https://giabac.ancarat.com/api/price-data';
 
-    // Các SKU cần theo dõi: [sku => [unit, label]]
-    const TRACKED_SKUS = [
-        'A4'  => ['unit' => 'LUONG', 'label' => 'Ngân Long Quảng Tiến 999 - 1 lượng'],
-        'K4'  => ['unit' => 'KG',    'label' => 'Ngân Long Quảng Tiến 999 - 1 Kilo'],
-        'A5'  => ['unit' => 'LUONG', 'label' => 'Bắc Sư Tử 999 - 1 lượng'],
-        'A6'  => ['unit' => 'LUONG', 'label' => '2025 Year of Snake 1 lượng 999 Silver Coin'],
-    ];
-
-    // SKU đại diện chính cho mỗi unit (dùng để lưu history và current price)
+    // SKU đại diện chính cho mỗi unit – chỉ track A4 (Lượng) và K4 (Kilo)
     const PRIMARY_SKU = [
         'LUONG' => 'A4',  // Ngân Long Quảng Tiến 999 - 1 lượng
         'KG'    => 'K4',  // Ngân Long Quảng Tiến 999 - 1 Kilo
@@ -55,51 +46,26 @@ class FetchAncaratSilverPrice extends Command
             $priceMap = $this->parsePriceMap($rows);
             $this->info('  Parsed ' . count($priceMap) . ' sản phẩm có SKU');
 
-            // 1. Lưu current price cho các SKU tracked
-            foreach (self::TRACKED_SKUS as $sku => $cfg) {
+            // Lưu history cho PRIMARY SKU (1 bảng duy nhất, dedup theo giá)
+            foreach (self::PRIMARY_SKU as $unit => $sku) {
                 if (!isset($priceMap[$sku])) {
                     $this->warn("  ⚠ SKU {$sku} không tìm thấy");
                     continue;
                 }
                 [$sell, $buy] = $priceMap[$sku];
-
                 if ($buy <= 0 || $sell <= 0) {
                     $this->warn("  ⚠ SKU {$sku} giá = 0, bỏ qua");
                     continue;
                 }
 
-                SilverPrice::updateOrCreate(
-                    ['source' => 'ancarat', 'unit' => $cfg['unit'] . '_' . $sku],
-                    [
-                        'product_name' => $cfg['label'],
-                        'unit'         => $cfg['unit'] . '_' . $sku,
-                        'buy_price'    => $buy,
-                        'sell_price'   => $sell,
-                        'recorded_at'  => now(),
-                    ]
-                );
-
-                $this->info("  ✅ [{$sku}] Mua: " . number_format($buy) . ' | Bán: ' . number_format($sell));
-            }
-
-            // 2. Lưu history cho PRIMARY SKU (mỗi đơn vị 1 record/ngày)
-            foreach (self::PRIMARY_SKU as $unit => $sku) {
-                if (!isset($priceMap[$sku])) {
-                    continue;
-                }
-                [$sell, $buy] = $priceMap[$sku];
-                if ($buy <= 0 || $sell <= 0) {
-                    continue;
-                }
-
-                $threshold = now()->subMinutes(25);
-                $exists = SilverPriceHistory::where('source', 'ancarat')
+                // Dedup theo giá: lấy record cuối cùng, so sánh buy/sell
+                $lastRecord = SilverPriceHistory::where('source', 'ancarat')
                     ->where('unit', $unit)
-                    ->where('recorded_at', '>=', $threshold)
-                    ->exists();
+                    ->orderByDesc('recorded_at')
+                    ->first();
 
-                if ($exists) {
-                    $this->line("  ⏭  History [{$unit}] đã có trong 25 phút, bỏ qua");
+                if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
+                    $this->line("  ⏭  History [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua');
                     continue;
                 }
 
@@ -112,7 +78,7 @@ class FetchAncaratSilverPrice extends Command
                     'recorded_at' => now(),
                 ]);
 
-                $this->info("  ✅ History [{$unit}]: Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
+                $this->info("  ✅ [{$unit}/{$sku}] Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
             }
 
         } catch (\Exception $e) {
@@ -122,7 +88,7 @@ class FetchAncaratSilverPrice extends Command
         }
 
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành Ancarat.');
-                $endAt = now()->format('Y-m-d H:i:s');
+        $endAt = now()->format('Y-m-d H:i:s');
         file_put_contents($logFile, "[{$endAt}] ■ silver:fetch-ancarat DONE\n", FILE_APPEND);
         return Command::SUCCESS;
     }
