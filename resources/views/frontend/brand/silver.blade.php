@@ -99,53 +99,6 @@
         radial-gradient(ellipse 50% 35% at 80% 90%, rgba(var(--brand-rgb, 176,190,197),0.05) 0%, transparent 60%);
     }
 
-    /* ── HEADER ── */
-    header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(7,9,15,0.92);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px; height: 60px;
-      display: flex; align-items: center; gap: 20px;
-    }
-    .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
-    .logo-icon {
-      width:34px; height:34px;
-      background: linear-gradient(135deg, var(--gold), #c8820a);
-      border-radius: 50%; display:flex; align-items:center;
-      justify-content:center; font-size:16px; font-weight:900;
-      color:#07090f; box-shadow: 0 0 18px rgba(245,197,24,0.4);
-    }
-    .logo-text {
-      font-size:20px; font-weight:800;
-      background: linear-gradient(90deg,#ffd76e,#f5c518);
-      -webkit-background-clip:text; background-clip:text;
-      -webkit-text-fill-color:transparent;
-    }
-    .logo-text span { -webkit-text-fill-color:var(--muted); font-weight:400; font-size:13px; }
-
-    .header-nav { display:flex; gap:8px; margin-left:auto; }
-    .header-nav a {
-      font-size:12.5px; font-weight:500; color:var(--muted2);
-      text-decoration:none; padding:5px 12px; border-radius:6px;
-      border:1px solid var(--border); transition:all .18s;
-    }
-    .header-nav a:hover { color:var(--text); border-color:var(--border2); }
-    .header-nav a.active {
-      color:#07090f; border-color:transparent;
-      background: linear-gradient(135deg, {{ $brand['color'] }}, {{ $brand['color2'] }});
-    }
-
-    .live-dot {
-      width:7px; height:7px; border-radius:50%;
-      background:var(--green); box-shadow:0 0 8px var(--green);
-      animation:blink 1.3s infinite; flex-shrink:0;
-    }
-    .live-label { font-size:11px; color:var(--muted); display:flex; align-items:center; gap:5px; }
-    @keyframes blink {
-      0%,100% { opacity:1; box-shadow:0 0 8px var(--green); }
-      50%      { opacity:.3; box-shadow:none; }
-    }
 
     /* ── MAIN ── */
     main {
@@ -154,8 +107,16 @@
       padding:40px 24px 80px;
     }
     @media(max-width:640px) {
-      main { padding:20px 12px 60px; }
-      header { padding:0 12px; gap:10px; }
+      main { padding:12px 0 60px; }
+      .breadcrumb{padding:0 12px}
+      .page-head{padding:0 12px}
+      .unit-tabs{padding:0 12px}
+      .price-table-wrap{border-radius:0;border-left:none;border-right:none}
+      .chart-section{border-radius:0;border-left:none;border-right:none}
+      .about-section{border-radius:0;border-left:none;border-right:none}
+      .faq-item{border-radius:0;border-left:none;border-right:none}
+      .faq-section h2{padding:0 12px}
+      .related-section{padding:0 12px}
     }
 
     /* ── BREADCRUMB ── */
@@ -365,22 +326,7 @@
 <div class="bg-glow"></div>
 
 {{-- HEADER --}}
-<header>
-  <a href="/" class="logo">
-    <div class="logo-icon">G</div>
-    <div class="logo-text">GiáVàng<span>.vn</span></div>
-  </a>
-  <nav class="header-nav">
-    <a href="/">Trang chủ</a>
-    <a href="/gia-bac-phu-quy"     class="{{ $brand['key'] === 'phuquy'     ? 'active' : '' }}">Phú Quý</a>
-    <a href="/gia-bac-ancarat"      class="{{ $brand['key'] === 'ancarat'    ? 'active' : '' }}">Ancarat</a>
-    <a href="/gia-bac-doji"         class="{{ $brand['key'] === 'doji'       ? 'active' : '' }}">DOJI</a>
-    <a href="/gia-bac-kim-ngan-phuc" class="{{ $brand['key'] === 'kimnganphuc' ? 'active' : '' }}">Kim Ngân Phúc</a>
-  </nav>
-  <span class="live-label" style="margin-left:12px">
-    <span class="live-dot"></span> Live
-  </span>
-</header>
+@include('frontend.partials.header', ['activePage' => $brand['key']])
 
 <main>
 

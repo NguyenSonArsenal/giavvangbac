@@ -729,6 +729,9 @@
     </div>
 
     <a href="#section-world" class="nav-link">🌍 Giá Thế Giới</a>
+    <a href="/quy-doi-bac" class="nav-link">⚖️ Quy Đổi</a>
+    <a href="/so-sanh-gia-bac" class="nav-link">📊 So Sánh</a>
+    <a href="/lich-su-gia-bac" class="nav-link">📈 Lịch Sử</a>
   </nav>
 
   <div class="header-tag" style="margin-left:auto">
@@ -767,6 +770,10 @@
     </a>
     <div class="drawer-divider">Biểu Đồ</div>
     <a href="#section-world" class="drawer-link" id="drawer-world"><span>🌍</span> Giá Thế Giới</a>
+    <div class="drawer-divider">Công Cụ</div>
+    <a href="/quy-doi-bac" class="drawer-link"><span>⚖️</span> Quy Đổi Giá Bạc</a>
+    <a href="/so-sanh-gia-bac" class="drawer-link"><span>📊</span> So Sánh Giá Bạc</a>
+    <a href="/lich-su-gia-bac" class="drawer-link"><span>📈</span> Lịch Sử Giá Bạc</a>
   </div>
 </div>
 

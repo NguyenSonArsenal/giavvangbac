@@ -1,15 +1,12 @@
 <?php
 
-use App\Http\Controllers\Backend\AuthController;
-use App\Http\Controllers\Backend\ContactController;
-use App\Http\Controllers\Backend\DashboardController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('login', [AuthController::class, 'showFormLogin'])->name('auth.login');
-Route::post('login', [AuthController::class, 'postLogin'])->name('auth.login.post');
-Route::get('logout', [AuthController::class, 'logout'])->name('auth.logout');
+Route::get('login',  'AuthController@showFormLogin')->name('auth.login');
+Route::post('login', 'AuthController@postLogin')->name('auth.login.post');
+Route::get('logout', 'AuthController@logout')->name('auth.logout');
 
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/', 'DashboardController@index')->name('dashboard');
 Route::group(['prefix'=>'category/', 'as'=>'category.'], function(){
     Route::get('/', ['as' => 'index', 'uses' => 'CategoryController@index']);
     Route::get('/create', ['as' => 'create', 'uses' => 'CategoryController@create']);
@@ -24,7 +21,7 @@ Route::group(['prefix'=>'category/', 'as'=>'category.'], function(){
 Route::resource('new', 'NewController');
 Route::resource('product', 'ProductController');
 Route::resource('contact', 'ContactController')->only(['index', 'show', 'destroy']);
-Route::post('contact/{id}/status', [ContactController::class, 'updateStatus'])->name('contact.status');
+Route::post('contact/{id}/status', 'ContactController@updateStatus')->name('contact.status');
 Route::post('tinymce_editor/upload', ['as' => 'tinymce_editor.upload', 'uses' => 'TinyMceEditorController@upload']);
 
 
