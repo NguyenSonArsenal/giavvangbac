@@ -23,37 +23,3 @@ Route::resource('product', 'ProductController');
 Route::resource('contact', 'ContactController')->only(['index', 'show', 'destroy']);
 Route::post('contact/{id}/status', 'ContactController@updateStatus')->name('contact.status');
 Route::post('tinymce_editor/upload', ['as' => 'tinymce_editor.upload', 'uses' => 'TinyMceEditorController@upload']);
-
-
-
-
-//    Route::get('forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
-//    Route::post('forgot-password', [AuthController::class, 'postForgotPassword'])->name('forgot-password.post');
-//    Route::get('recovery-password/{otp}', [AuthController::class, 'getRecoveryPassword'])->name('recovery-password');
-//    Route::post('recovery-password/{otp}', [AuthController::class, 'postRecoveryPassword'])->name('recovery-password.post');
-
-//
-//    Route::group(['middleware' => ['authBackend']], function () {
-//        Route::get('logout', [AuthController::class, 'logout'])->name('logout');
-//        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-//
-//        // ========== Module User ==========
-//        Route::group(['prefix' => 'user/', 'as' => 'user.'], function () {
-//            Route::get('/', [UserController::class, 'index'])->name('index');
-//            Route::get('/create', [UserController::class, 'create'])->name('create');
-//            Route::post('/store', [UserController::class, 'store'])->name('store');
-//            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('edit');
-//            Route::post('/update', [UserController::class, 'update'])->name('update');
-//            Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
-//        });
-//
-//        // ========== Module Tracking Email ==========
-//        Route::group(['prefix' => 'tracking-email/', 'as' => 'tracking_email.'], function () {
-//            Route::get('/', [TrackingEmailController::class, 'index'])->name('index');
-//            Route::get('create', [TrackingEmailController::class, 'create'])->name('create');
-//            Route::post('store', [TrackingEmailController::class, 'store'])->name('store');
-//        });
-//
-//        Route::get('coin', [CommonController::class, 'coin'])->name('coin.index');
-//        Route::post('coin-new', [CommonController::class, 'getLastPriceCoin'])->name('coin.new');
-//    });

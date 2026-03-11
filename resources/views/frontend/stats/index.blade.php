@@ -1,76 +1,17 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>📊 Thống Kê Lượt Truy Cập | GiáVàng.vn</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--bg:#07090f;--bg2:#0d1018;--bg3:#131724;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-      --gold:#f5c518;--text:#e4e8f2;--text2:#c4cad8;--muted:#6e778c;--muted2:#909ab2;
-      --green:#22c97a;--red:#f55252;--blue:#4f7af8;--purple:#a78bfa;--radius:14px;--radius-sm:8px}
-    html{scroll-behavior:smooth}
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
-    main{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
-    @media(max-width:640px){
-      main{padding:12px 0 60px}
-      .back-link{padding:0 12px}
-      .page-title{padding:0 12px}
-      .page-sub{padding:0 12px}
-      .cards{padding:0 12px}
-      .chart-wrap{border-radius:0;border-left:none;border-right:none}
-      .tbl-wrap{border-radius:0;border-left:none;border-right:none}
-    }
+@extends('frontend.partials.layout', ['activePage' => '', 'maxWidth' => '1100px'])
 
-    .page-title{font-size:28px;font-weight:800;margin-bottom:6px}
-    .page-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+@section('title', '📊 Thống Kê Lượt Truy Cập | GiáVàng.vn')
 
-    /* Overview Cards */
-    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:28px}
-    .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-    .card-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-    .card-val{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace}
-    .card-sub{font-size:12px;color:var(--muted);margin-top:4px}
-    .card-green .card-val{color:var(--green)}
-    .card-blue .card-val{color:var(--blue)}
-    .card-purple .card-val{color:var(--purple)}
-    .card-gold .card-val{color:var(--gold)}
-    .card-red .card-val{color:var(--red)}
+@push('head-scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+@endpush
 
-    /* Chart */
-    .chart-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:28px}
-    .chart-title{font-size:16px;font-weight:700;margin-bottom:16px}
-    .chart-box{height:280px}
+@push('styles')
+<link rel="stylesheet" href="/frontend/css/stats.css"/>
+@endpush
 
-    /* Tables */
-    .tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:28px}
-    .tbl-head{padding:16px 20px;font-size:16px;font-weight:700;border-bottom:1px solid var(--border)}
-    table{width:100%;border-collapse:collapse}
-    th{padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--bg3);text-align:left;border-bottom:1px solid var(--border)}
-    td{padding:10px 16px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text2)}
-    tr:last-child td{border-bottom:none}
-    tr:hover{background:rgba(255,255,255,0.02)}
-    .mono{font-family:'JetBrains Mono',monospace;font-size:12px}
-    .url-link{color:var(--blue);text-decoration:none}
-    .url-link:hover{text-decoration:underline}
-    .bar{height:6px;border-radius:3px;background:var(--bg3);position:relative;min-width:60px}
-    .bar-fill{position:absolute;top:0;left:0;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--purple))}
-    .back-link{font-size:13px;color:var(--blue);text-decoration:none;margin-bottom:20px;display:inline-block}
-    .back-link:hover{text-decoration:underline}
-
-    @media(max-width:640px){
-      .cards{grid-template-columns:1fr 1fr}
-      .card-val{font-size:22px}
-      table th,table td{padding:8px 10px;font-size:12px}
-    }
-  </style>
-</head>
-<body>
-<main>
-  <a href="/" class="back-link">← Trang chủ</a>
+@section('content')
+<a href="/" class="back-link">← Trang chủ</a>
   <h1 class="page-title">📊 Thống Kê Lượt Truy Cập</h1>
   <p class="page-sub">Dữ liệu tự động thu thập · Cập nhật mỗi lần load trang · Không tính bot</p>
 
@@ -153,56 +94,8 @@
       </tbody>
     </table>
   </div>
-</main>
+@endsection
 
-<script>
-(function(){
-  var labels = @json($dailyViews->pluck('date'));
-  var views  = @json($dailyViews->pluck('views'));
-  var uniq   = @json($dailyViews->pluck('unique_ips'));
-
-  new Chart(document.getElementById('daily-chart'), {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'Lượt xem',
-          data: views,
-          borderColor: '#4f7af8',
-          backgroundColor: 'rgba(79,122,248,0.08)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.35,
-          pointRadius: 3,
-          pointHoverRadius: 6,
-        },
-        {
-          label: 'Unique IP',
-          data: uniq,
-          borderColor: '#a78bfa',
-          backgroundColor: 'rgba(167,139,250,0.06)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.35,
-          pointRadius: 3,
-          pointHoverRadius: 6,
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'top', labels: { color: '#909ab2', font: { size: 12 } } },
-      },
-      scales: {
-        x: { ticks: { color: '#6e778c', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
-        y: { ticks: { color: '#6e778c', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
-      }
-    }
-  });
-})();
-</script>
-</body>
-</html>
+@push('scripts')
+<script src="/frontend/js/stats.js"></script>
+@endpush

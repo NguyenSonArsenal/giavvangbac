@@ -1,101 +1,23 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Bạc 999 Là Gì? Giá Trị, Đặc Điểm & Phân Biệt Bạc Thật Giả | GiáVàng.vn</title>
+@extends('frontend.partials.layout', ['activePage' => '', 'maxWidth' => '780px'])
+
+@section('title', 'Bạc 999 Là Gì? Giá Trị, Đặc Điểm & Phân Biệt Bạc Thật Giả | GiáVàng.vn')
+
+@section('meta')
   <meta name="description" content="Tìm hiểu bạc 999 là gì, độ tinh khiết bao nhiêu, phân biệt bạc 999 thật giả, so sánh với bạc 925 và 950. Hướng dẫn đầy đủ từ chuyên gia GiáVàng.vn."/>
   <link rel="canonical" href="{{ url('/bac-999-la-gi') }}"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --bg:#07090f;--bg2:#0d1018;--bg3:#131724;
-      --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-      --gold:#f5c518;--text:#e4e8f2;--text2:#c4cad8;--muted:#6e778c;--muted2:#909ab2;
-      --green:#22c97a;--red:#f55252;--blue:#4f7af8;
-      --radius:14px;--radius-sm:8px;
-    }
-    html{scroll-behavior:smooth}
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-    .bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0;
-      background:radial-gradient(ellipse 60% 40% at 20% 0%,rgba(245,197,24,0.05) 0%,transparent 60%),
-                 radial-gradient(ellipse 50% 35% at 80% 90%,rgba(176,190,197,0.04) 0%,transparent 60%)}
+@endsection
 
-    main{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:40px 24px 80px}
-    @media(max-width:640px){
-      main{padding:12px 0 60px}
-      .breadcrumb{padding:0 12px}
-      .article{border-radius:0;border-left:none;border-right:none}
-      .faq{border-radius:0;border-left:none;border-right:none}
-      .cta-box{border-radius:0;border-left:none;border-right:none}
-    }
-    .breadcrumb{font-size:12px;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-    .breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--text2)}
+@section('bg-glow')
+<div class="bg-glow" style="position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 20% 0%,rgba(245,197,24,0.05) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 35% at 80% 90%,rgba(176,190,197,0.04) 0%,transparent 60%)"></div>
+@endsection
 
-    /* ARTICLE */
-    .article{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
-      padding:36px;margin-bottom:28px;box-shadow:0 8px 40px rgba(0,0,0,0.4)}
-    @media(max-width:640px){.article{padding:20px 16px}}
-    .article-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;
-      padding:4px 12px;border-radius:20px;background:rgba(245,197,24,0.12);color:var(--gold);margin-bottom:16px;
-      border:1px solid rgba(245,197,24,0.2)}
-    .article h1{font-size:28px;font-weight:800;letter-spacing:-.4px;line-height:1.3;margin-bottom:12px}
-    @media(max-width:640px){.article h1{font-size:22px}}
-    .article-meta{font-size:12px;color:var(--muted);margin-bottom:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-    .article h2{font-size:20px;font-weight:700;color:var(--text);margin:32px 0 14px;padding-top:16px;border-top:1px solid var(--border)}
-    .article h3{font-size:16px;font-weight:700;color:var(--text2);margin:20px 0 10px}
-    .article p{font-size:15px;line-height:1.85;color:var(--text2);margin-bottom:14px}
-    .article ul,.article ol{margin:0 0 16px 20px;font-size:15px;line-height:1.85;color:var(--text2)}
-    .article li{margin-bottom:6px}
-    .article strong{color:var(--text)}
-    .article a{color:var(--blue);text-decoration:none;border-bottom:1px solid rgba(79,122,248,0.3)}
-    .article a:hover{border-bottom-color:var(--blue)}
+@push('styles')
+<link rel="stylesheet" href="/frontend/css/article-bac999.css"/>
+@endpush
 
-    /* HIGHLIGHT BOX */
-    .highlight-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);
-      padding:20px;margin:20px 0;border-left:3px solid var(--gold)}
-    .highlight-box h4{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
-    .highlight-box p{margin-bottom:8px}
-
-    /* COMPARISON TABLE */
-    .cmp-tbl{width:100%;border-collapse:collapse;margin:16px 0 20px}
-    .cmp-tbl th{padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
-      color:var(--muted);background:var(--bg3);border-bottom:1px solid var(--border);text-align:left}
-    .cmp-tbl td{padding:10px 14px;font-size:14px;border-bottom:1px solid var(--border);color:var(--text2)}
-    .cmp-tbl tr:last-child td{border-bottom:none}
-
-    /* FAQ */
-    .faq{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:28px}
-    .faq h2{font-size:18px;font-weight:700;margin-bottom:16px;border:none;padding:0}
-    .faq-item{border-bottom:1px solid var(--border);padding:14px 0}
-    .faq-item:last-child{border-bottom:none}
-    .faq-q{font-size:15px;font-weight:600;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-    .faq-q::after{content:'＋';font-size:18px;color:var(--muted);transition:transform .2s}
-    .faq-item.open .faq-q::after{transform:rotate(45deg);color:var(--gold)}
-    .faq-a{font-size:14px;line-height:1.8;color:var(--text2);max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
-    .faq-item.open .faq-a{max-height:500px;padding-top:10px}
-
-    /* CTA */
-    .cta-box{background:linear-gradient(135deg,rgba(79,122,248,0.1),rgba(167,139,250,0.08));
-      border:1px solid rgba(79,122,248,0.2);border-radius:var(--radius);padding:24px;text-align:center;margin-bottom:28px}
-    .cta-box p{font-size:14px;color:var(--text2);margin-bottom:12px}
-    .cta-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-    .cta-link{padding:8px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;
-      text-decoration:none;transition:all .18s;border:1px solid var(--border)}
-    .cta-link:hover{transform:translateY(-1px)}
-    .cta-primary{background:linear-gradient(135deg,#4f7af8,#7c3aed);color:#fff;border-color:transparent}
-    .cta-secondary{background:var(--bg3);color:var(--text2)}
-
-  </style>
-</head>
-<body>
-<div class="bg-glow"></div>
-
-@include('frontend.partials.header', ['activePage' => ''])
-
-<main>
+@section('content')
   <div class="breadcrumb">
     <a href="/">Trang chủ</a><span>›</span><span>Bạc 999 Là Gì?</span>
   </div>
@@ -209,8 +131,4 @@
       <a href="/lich-su-gia-bac" class="cta-link cta-secondary">Lịch Sử Giá</a>
     </div>
   </div>
-</main>
-
-@include('frontend.partials.footer')
-</body>
-</html>
+@endsection
