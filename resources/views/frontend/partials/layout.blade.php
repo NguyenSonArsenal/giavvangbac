@@ -3,6 +3,18 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+  @if(config('services.ga.measurement_id'))
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.ga.measurement_id') }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ config('services.ga.measurement_id') }}');
+  </script>
+  @endif
+
   <title>@yield('title', 'Giá Vàng & Bạc – GiáVàng.vn')</title>
   @yield('meta')
   <link rel="preconnect" href="https://fonts.googleapis.com"/>

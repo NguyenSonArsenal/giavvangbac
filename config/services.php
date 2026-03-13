@@ -30,4 +30,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'ga' => [
+        'measurement_id' => "G-B328892T0W",
+    ],
 ];
