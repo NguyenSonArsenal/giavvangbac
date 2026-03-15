@@ -41,6 +41,8 @@
 
 @include('frontend.partials.footer')
 
+@include('frontend.partials.floating-contact')
+
 @stack('scripts')
 </body>
 </html>
