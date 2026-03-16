@@ -5,6 +5,26 @@
 @section('meta')
   <meta name="description" content="Tìm hiểu bạc 999 là gì, độ tinh khiết bao nhiêu, phân biệt bạc 999 thật giả, so sánh với bạc 925 và 950. Hướng dẫn đầy đủ từ chuyên gia GiáVàng.vn."/>
   <link rel="canonical" href="{{ url('/bac-999-la-gi') }}"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:title" content="Bạc 999 Là Gì? Giá Trị, Đặc Điểm & Phân Biệt Bạc Thật Giả | GiáVàng.vn"/>
+  <meta property="og:description" content="Tìm hiểu bạc 999 là gì, độ tinh khiết bao nhiêu, phân biệt bạc 999 thật giả, so sánh với bạc 925 và 950."/>
+  <meta property="og:url" content="{{ url('/bac-999-la-gi') }}"/>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Bạc 999 Là Gì? Tất Tần Tật Về Bạc Nguyên Chất 99.9%",
+    "description": "Tìm hiểu bạc 999 là gì, độ tinh khiết, phân biệt thật giả, so sánh với bạc 925 và 950.",
+    "url": "{{ url('/bac-999-la-gi') }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "GiáVàng.vn",
+      "url": "{{ url('/') }}"
+    },
+    "datePublished": "2026-03-01",
+    "dateModified": "{{ now()->format('Y-m-d') }}"
+  }
+  </script>
 @endsection
 
 @section('bg-glow')

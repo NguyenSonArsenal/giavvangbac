@@ -5,6 +5,10 @@
 @section('meta')
   <meta name="description" content="So sánh 4 địa chỉ mua bạc 999 uy tín nhất Việt Nam: Phú Quý, Ancarat, DOJI, Kim Ngân Phúc. Đánh giá chất lượng, giá cả, chính sách mua lại."/>
   <link rel="canonical" href="{{ url('/nen-mua-bac-o-dau') }}"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:title" content="Nên Mua Bạc Ở Đâu Uy Tín? Top 4 Thương Hiệu Bạc Việt Nam | GiáVàng.vn"/>
+  <meta property="og:description" content="So sánh 4 địa chỉ mua bạc 999 uy tín nhất Việt Nam: Phú Quý, Ancarat, DOJI, Kim Ngân Phúc."/>
+  <meta property="og:url" content="{{ url('/nen-mua-bac-o-dau') }}"/>
 @endsection
 
 @section('bg-glow')

@@ -1,6 +1,29 @@
 @extends('frontend.partials.layout', ['activePage' => 'home', 'maxWidth' => '1600px'])
 
-@section('title', 'Giá Vàng & Bạc Thế Giới – GiáVàng.vn')
+@section('title', 'Giá Vàng & Bạc Hôm Nay – Cập Nhật Real-time | GiáVàng.vn')
+
+@section('meta')
+  <meta name="description" content="Giá vàng và bạc hôm nay cập nhật real-time. Biểu đồ giá vàng thế giới XAU/USD, giá bạc 999 Phú Quý, Ancarat, DOJI, Kim Ngân Phúc. So sánh & quy đổi giá bạc trực tuyến."/>
+  <link rel="canonical" href="{{ url('/') }}"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Giá Vàng & Bạc Hôm Nay – Cập Nhật Real-time | GiáVàng.vn"/>
+  <meta property="og:description" content="Giá vàng và bạc hôm nay cập nhật real-time. Biểu đồ giá vàng thế giới, giá bạc 999 các thương hiệu uy tín tại Việt Nam."/>
+  <meta property="og:url" content="{{ url('/') }}"/>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "GiáVàng.vn",
+    "url": "{{ url('/') }}",
+    "description": "Giá vàng và bạc hôm nay cập nhật real-time. Biểu đồ giá vàng thế giới, giá bạc 999 các thương hiệu uy tín.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "GiáVàng.vn",
+      "url": "{{ url('/') }}"
+    }
+  }
+  </script>
+@endsection
 
 @section('bg-glow')
 <div class="bg-glow" style="position:fixed;inset:0;pointer-events:none;z-index:0;

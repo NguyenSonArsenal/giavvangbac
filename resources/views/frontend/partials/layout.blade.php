@@ -16,6 +16,9 @@
   @endif
 
   <title>@yield('title', 'Giá Vàng & Bạc – GiáVàng.vn')</title>
+  <meta name="robots" content="index, follow"/>
+  <meta property="og:site_name" content="GiáVàng.vn"/>
+  <meta property="og:locale" content="vi_VN"/>
   @yield('meta')
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>

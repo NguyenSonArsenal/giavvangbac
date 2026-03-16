@@ -3,8 +3,12 @@
 @section('title', 'Quy Đổi Giá Bạc – Tính Toán KG, Lượng, Chỉ, Gram | GiáVàng.vn')
 
 @section('meta')
-  <meta name="description" content="Công cụ quy đổi giá bạc trực tuyến."/>
+  <meta name="description" content="Công cụ quy đổi giá bạc trực tuyến. Tính toán nhanh giá trị bạc theo KG, lượng, chỉ, gram từ Phú Quý, Ancarat, DOJI, Kim Ngân Phúc."/>
   <link rel="canonical" href="{{ url('/quy-doi-bac') }}"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Quy Đổi Giá Bạc – Tính Toán KG, Lượng, Chỉ, Gram | GiáVàng.vn"/>
+  <meta property="og:description" content="Công cụ quy đổi giá bạc trực tuyến. Tính toán nhanh giá trị bạc theo KG, lượng, chỉ, gram."/>
+  <meta property="og:url" content="{{ url('/quy-doi-bac') }}"/>
 @endsection
 
 @section('bg-glow')

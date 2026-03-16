@@ -4,6 +4,27 @@
 
 @section('meta')
 <meta name="description" content="{{ $post->des ?? Str::limit(strip_tags($post->content), 160) }}"/>
+<link rel="canonical" href="{{ url('/bai-viet/' . $post->slug) }}"/>
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="{{ $post->title }} | GiáVàng.vn"/>
+<meta property="og:description" content="{{ $post->des ?? Str::limit(strip_tags($post->content), 160) }}"/>
+<meta property="og:url" content="{{ url('/bai-viet/' . $post->slug) }}"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ $post->title }}",
+  "description": "{{ $post->des ?? Str::limit(strip_tags($post->content), 160) }}",
+  "url": "{{ url('/bai-viet/' . $post->slug) }}",
+  "datePublished": "{{ $post->created_at->toIso8601String() }}",
+  "dateModified": "{{ $post->updated_at->toIso8601String() }}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "GiáVàng.vn",
+    "url": "{{ url('/') }}"
+  }
+}
+</script>
 @endsection
 
 @push('styles')

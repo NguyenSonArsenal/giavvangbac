@@ -3,7 +3,12 @@
 @section('title', 'Bài Viết | GiáVàng.vn')
 
 @section('meta')
-<meta name="description" content="Các bài viết, kiến thức về vàng bạc, đầu tư, và thị trường kim loại quý tại GiáVàng.vn"/>
+<meta name="description" content="Tin tức, phân tích giá vàng bạc, kiến thức đầu tư kim loại quý. Cập nhật mới nhất từ GiáVàng.vn"/>
+<link rel="canonical" href="{{ url('/bai-viet') }}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Bài Viết & Kiến Thức Đầu Tư Vàng Bạc | GiáVàng.vn"/>
+<meta property="og:description" content="Tin tức, phân tích giá vàng bạc, kiến thức đầu tư kim loại quý tại GiáVàng.vn"/>
+<meta property="og:url" content="{{ url('/bai-viet') }}"/>
 @endsection
 
 @push('styles')

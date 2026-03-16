@@ -3,8 +3,12 @@
 @section('title', 'So Sánh Giá Bạc Các Thương Hiệu Hôm Nay | GiáVàng.vn')
 
 @section('meta')
-  <meta name="description" content="So sánh giá bạc mua vào bán ra của Phú Quý, Ancarat, DOJI, Kim Ngân Phúc."/>
+  <meta name="description" content="So sánh giá bạc 999 mua vào bán ra của Phú Quý, Ancarat, DOJI, Kim Ngân Phúc hôm nay. Bảng so sánh real-time giúp bạn chọn nơi mua giá tốt nhất."/>
   <link rel="canonical" href="{{ url('/so-sanh-gia-bac') }}"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="So Sánh Giá Bạc Các Thương Hiệu Hôm Nay | GiáVàng.vn"/>
+  <meta property="og:description" content="So sánh giá bạc 999 mua vào bán ra của Phú Quý, Ancarat, DOJI, Kim Ngân Phúc hôm nay."/>
+  <meta property="og:url" content="{{ url('/so-sanh-gia-bac') }}"/>
 @endsection
 
 @section('bg-glow')

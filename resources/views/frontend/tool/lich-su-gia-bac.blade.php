@@ -3,8 +3,12 @@
 @section('title', 'Lịch Sử Giá Bạc Hôm Nay & 30/60/90 Ngày – Biểu Đồ Trực Quan | GiáVàng.vn')
 
 @section('meta')
-  <meta name="description" content="Xem lịch sử giá bạc mua vào bán ra theo ngày và trong ngày."/>
+  <meta name="description" content="Xem lịch sử giá bạc 999 mua vào bán ra theo ngày. Biểu đồ trực quan 30/60/90 ngày từ Phú Quý, Ancarat, DOJI, Kim Ngân Phúc."/>
   <link rel="canonical" href="{{ url('/lich-su-gia-bac') }}"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Lịch Sử Giá Bạc Hôm Nay & 30/60/90 Ngày – Biểu Đồ Trực Quan | GiáVàng.vn"/>
+  <meta property="og:description" content="Xem lịch sử giá bạc 999 mua vào bán ra theo ngày. Biểu đồ trực quan từ các thương hiệu uy tín."/>
+  <meta property="og:url" content="{{ url('/lich-su-gia-bac') }}"/>
 @endsection
 
 @section('bg-glow')

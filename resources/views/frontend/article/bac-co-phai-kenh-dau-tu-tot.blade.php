@@ -3,8 +3,12 @@
 @section('title', 'Đầu Tư Bạc Có Lời Không? Phân Tích Ưu Nhược Điểm 2025 | GiáVàng.vn')
 
 @section('meta')
-  <meta name="description" content="Bạc có phải kênh đầu tư tốt? Phân tích lợi nhuận, rủi ro, so sánh bạc với vàng, chứng khoán, bất động sản."/>
+  <meta name="description" content="Bạc có phải kênh đầu tư tốt? Phân tích lợi nhuận, rủi ro, so sánh bạc với vàng, chứng khoán, bất động sản. Chiến lược đầu tư bạc hiệu quả."/>
   <link rel="canonical" href="{{ url('/bac-co-phai-kenh-dau-tu-tot') }}"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:title" content="Đầu Tư Bạc Có Lời Không? Phân Tích Ưu Nhược Điểm | GiáVàng.vn"/>
+  <meta property="og:description" content="Bạc có phải kênh đầu tư tốt? Phân tích lợi nhuận, rủi ro, so sánh bạc với vàng, chứng khoán."/>
+  <meta property="og:url" content="{{ url('/bac-co-phai-kenh-dau-tu-tot') }}"/>
 @endsection
 
 @section('bg-glow')
