@@ -11,6 +11,23 @@
       </svg>
     </a>
     --}}
+
+    {{-- 🎵 Background Music Toggle --}}
+    <button class="floating-contact__btn floating-contact__btn--music" id="bgMusicToggle" title="Bật/Tắt nhạc nền" aria-label="Toggle background music">
+      {{-- Volume ON icon --}}
+      <svg class="bgm-icon-on" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+      </svg>
+      {{-- Volume OFF icon --}}
+      <svg class="bgm-icon-off" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <line x1="23" y1="9" x2="17" y2="15"/>
+        <line x1="17" y1="9" x2="23" y2="15"/>
+      </svg>
+    </button>
+
     {{-- Messenger --}}
     <a href="https://m.me/nguyensonarsenal.10" target="_blank" rel="noopener noreferrer"
        class="floating-contact__btn floating-contact__btn--messenger" title="Chat Messenger">
@@ -26,6 +43,11 @@
       </svg>
     </a>
   </div>
+
+  {{-- Hidden audio element --}}
+  <audio id="bgMusicAudio" loop preload="auto">
+    <source src="/frontend/audio/ambient.mp3" type="audio/mpeg">
+  </audio>
 
   {{-- Scroll to Top --}}
   <button class="floating-contact__btn floating-contact__scroll-top" id="scrollToTopBtn" title="Lên đầu trang" aria-label="Scroll to top" style="display:none">
@@ -91,6 +113,7 @@
 }
 .floating-contact__btn:nth-child(1) { animation-delay: .1s; }
 .floating-contact__btn:nth-child(2) { animation-delay: .2s; }
+.floating-contact__btn:nth-child(3) { animation-delay: .3s; }
 
 .floating-contact__btn:hover {
   transform: scale(1.12);
@@ -108,6 +131,53 @@
 /* ── Messenger specific ── */
 .floating-contact__btn--messenger {
   border: 2px solid #0099FF;
+}
+
+/* ── Music toggle ── */
+.floating-contact__btn--music {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border: 2px solid #a855f7;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+.floating-contact__btn--music:hover {
+  box-shadow: 0 6px 24px rgba(168, 85, 247, 0.45), 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Icons inside music button */
+.floating-contact__btn--music .bgm-icon-on,
+.floating-contact__btn--music .bgm-icon-off {
+  position: absolute;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.floating-contact__btn--music .bgm-icon-on {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.floating-contact__btn--music .bgm-icon-off {
+  opacity: 1;
+  transform: scale(1);
+}
+/* When playing */
+.floating-contact__btn--music.is-playing .bgm-icon-on {
+  opacity: 1;
+  transform: scale(1);
+}
+.floating-contact__btn--music.is-playing .bgm-icon-off {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+/* Glow pulse when playing */
+.floating-contact__btn--music.is-playing {
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.5), 0 0 24px rgba(168, 85, 247, 0.25);
+  animation: bgmGlowPulse 2s ease-in-out infinite;
+}
+@keyframes bgmGlowPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(168, 85, 247, 0.5), 0 0 24px rgba(168, 85, 247, 0.25); }
+  50% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.7), 0 0 40px rgba(168, 85, 247, 0.35); }
 }
 
 /* ── Scroll to Top ── */
@@ -275,5 +345,85 @@
       ticking = true;
     }
   });
+
+  // ═══ Background Music Logic ═══
+  const musicBtn = document.getElementById('bgMusicToggle');
+  const audio = document.getElementById('bgMusicAudio');
+  const STORAGE_KEY = 'bgm_enabled';
+
+  if (musicBtn && audio) {
+    audio.volume = 0.3;
+    var autoPlayTriggered = false;
+
+    function setPlaying(playing) {
+      if (playing) {
+        musicBtn.classList.add('is-playing');
+        musicBtn.title = 'Tắt nhạc nền';
+      } else {
+        musicBtn.classList.remove('is-playing');
+        musicBtn.title = 'Bật nhạc nền';
+      }
+    }
+
+    function tryPlay() {
+      var playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(function() {
+          setPlaying(true);
+          localStorage.setItem(STORAGE_KEY, 'true');
+        }).catch(function() {
+          // Autoplay blocked – will retry on next user interaction
+          setPlaying(false);
+        });
+      }
+    }
+
+    // Toggle on click
+    musicBtn.addEventListener('click', function() {
+      if (audio.paused) {
+        tryPlay();
+      } else {
+        audio.pause();
+        setPlaying(false);
+        localStorage.setItem(STORAGE_KEY, 'false');
+      }
+    });
+
+    // ── Auto-play on first user interaction ──
+    // Trình duyệt chặn autoplay, nhưng cho phép play sau khi user tương tác
+    // → Đợi user scroll/click/chạm bất kỳ đâu → tự động phát nhạc
+    function autoPlayOnInteraction() {
+      if (autoPlayTriggered) return;
+      // Nếu user đã tắt nhạc trước đó → tôn trọng, không tự phát
+      if (localStorage.getItem(STORAGE_KEY) === 'false') return;
+      autoPlayTriggered = true;
+      tryPlay();
+      // Gỡ listener sau khi đã trigger
+      document.removeEventListener('scroll', autoPlayOnInteraction);
+      document.removeEventListener('click', autoPlayOnInteraction);
+      document.removeEventListener('touchstart', autoPlayOnInteraction);
+    }
+
+    // Thử play ngay (sẽ thành công nếu user đã tương tác trước đó / reload)
+    if (localStorage.getItem(STORAGE_KEY) !== 'false') {
+      var directPlay = audio.play();
+      if (directPlay !== undefined) {
+        directPlay.then(function() {
+          autoPlayTriggered = true;
+          setPlaying(true);
+          localStorage.setItem(STORAGE_KEY, 'true');
+        }).catch(function() {
+          // Bị chặn → đăng ký listener chờ user tương tác
+          document.addEventListener('scroll', autoPlayOnInteraction, { once: false, passive: true });
+          document.addEventListener('click', autoPlayOnInteraction, { once: true });
+          document.addEventListener('touchstart', autoPlayOnInteraction, { once: true });
+        });
+      }
+    }
+
+    // Listen for audio events to keep icon in sync
+    audio.addEventListener('play', function() { setPlaying(true); });
+    audio.addEventListener('pause', function() { setPlaying(false); });
+  }
 })();
 </script>
