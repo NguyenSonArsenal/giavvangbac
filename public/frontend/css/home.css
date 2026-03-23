@@ -156,6 +156,81 @@
 
     .foot-note { text-align:center; margin-top:32px; font-size:12px; color:var(--muted); }
 
+    /* ══ AI TREND ANALYSIS BOX ══ */
+    .sv-trend-box {
+      background: linear-gradient(135deg, rgba(79,122,248,0.06), rgba(168,85,247,0.06));
+      border: 1px solid rgba(79,122,248,0.2);
+      border-radius: var(--radius);
+      padding: 16px 20px 14px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .sv-trend-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #4f7af8, #a855f7, #f59e0b);
+      opacity: 0.7;
+    }
+    .sv-trend-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 10px;
+    }
+    .sv-trend-icon {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: linear-gradient(135deg, rgba(79,122,248,0.2), rgba(168,85,247,0.2));
+      display: flex; align-items: center; justify-content: center;
+      color: #a78bfa; flex-shrink: 0;
+    }
+    .sv-trend-label {
+      font-size: 12px; font-weight: 700;
+      color: #a78bfa; text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .sv-trend-time {
+      margin-left: auto; font-size: 10.5px;
+      color: var(--muted); white-space: nowrap;
+    }
+    .sv-trend-body {
+      font-size: 13.5px; line-height: 1.7;
+      color: #c8cfe0;
+    }
+    .sv-trend-body.has-content {
+      border-left: 3px solid rgba(79,122,248,0.35);
+      padding-left: 14px;
+    }
+    .sv-trend-skeleton { display: flex; flex-direction: column; gap: 8px; }
+    .sv-trend-skel-line {
+      height: 14px; border-radius: 4px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+      background-size: 200% 100%;
+      animation: svTrendShimmer 1.5s ease-in-out infinite;
+    }
+    @keyframes svTrendShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .sv-trend-stats {
+      display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;
+    }
+    .sv-trend-stat {
+      font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 5px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted2);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .sv-trend-stat.up   { color: var(--green); border-color: rgba(34,201,122,0.2); background: rgba(34,201,122,0.06); }
+    .sv-trend-stat.down { color: var(--red);   border-color: rgba(245,82,82,0.2);  background: rgba(245,82,82,0.06); }
+    .sv-trend-error { font-size: 12px; color: var(--muted); font-style: italic; }
+    @media (max-width: 600px) {
+      .sv-trend-box { padding: 12px 14px 10px; border-radius: 0; border-left: none; border-right: none; }
+      .sv-trend-body { font-size: 12.5px; }
+      .sv-trend-stats { gap: 6px; }
+      .sv-trend-stat { font-size: 10px; padding: 2px 8px; }
+    }
+
     /* ══ COMPACT SILVER BRAND SECTION ══ */
     .sv-compact-section { margin-top: 32px; }
     .sv-section-head {

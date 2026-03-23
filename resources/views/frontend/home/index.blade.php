@@ -74,6 +74,37 @@
     </div>
   </div>
 
+  {{-- 📊 AI Trend Analysis --}}
+  <div class="sv-trend-box" id="svTrendBox">
+    <div class="sv-trend-header">
+      <div class="sv-trend-icon">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <span class="sv-trend-label">Nhận định xu hướng</span>
+      <span class="sv-trend-time" id="svTrendTime"></span>
+
+    </div>
+    <div class="sv-trend-body" id="svTrendBody">
+      <div class="sv-trend-skeleton">
+        <div class="sv-trend-skel-line" style="width:95%"></div>
+        <div class="sv-trend-skel-line" style="width:80%"></div>
+        <div class="sv-trend-skel-line" style="width:60%"></div>
+      </div>
+    </div>
+    <div class="sv-trend-stats" id="svTrendStats" style="display:none">
+      <span class="sv-trend-stat" id="svTrendChange"></span>
+      <span class="sv-trend-stat" id="svTrendHigh"></span>
+      <span class="sv-trend-stat" id="svTrendLow"></span>
+    </div>
+    <div style="font-size: 11px; margin-top: 4px">
+      <i>
+        Đây là dự đoạn của mình, có đúng có sai, bạn đọc hãy tự cân nhắc trước khi quyết định xuống tiền đầu tư, nếu thấy web hay, có ý nghĩa, hãy <span class="donate-cafe-link" onclick="openDonatePopup()">☕ tặng mình cốc cafe</span> để duy trì sự hoạt động của web
+      </i>
+    </div>
+  </div>
+
   <!-- ══ SECTION: Giá Vàng & Bạc Thế Giới ══ -->
   <section class="world-charts-section" id="section-world">
     <div class="wc-header">
@@ -147,6 +178,8 @@
         <p>Phú Quý · Ancarat · DOJI · Cập nhật real-time</p>
       </div>
     </div>
+
+
 
     <div class="sv-main-layout">
     <!-- 4 Brand Cards -->

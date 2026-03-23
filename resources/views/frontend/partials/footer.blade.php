@@ -10,7 +10,7 @@ footer.site-footer a:hover{color:var(--text)}
     <a href="/quy-doi-bac">Quy Đổi</a> ·
     <a href="/so-sanh-gia-bac">So Sánh</a> ·
     <a href="/lich-su-gia-bac">Lịch Sử</a> ·
-    <a href="/dk-stats">📊 Stats</a>
+{{--    <a href="/dk-stats">📊 Stats</a>--}}
   </p>
   <p style="margin-top:6px">© {{ now()->year }} GiáVàng.vn</p>
 </footer>

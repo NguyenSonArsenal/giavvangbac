@@ -12,6 +12,17 @@
     </a>
     --}}
 
+    {{-- ☕ Donate Button --}}
+    <button class="floating-contact__btn floating-contact__btn--donate" id="donateFloatBtn" title="Mời cốc cafe ☕" aria-label="Donate">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+        <line x1="6" y1="1" x2="6" y2="4"/>
+        <line x1="10" y1="1" x2="10" y2="4"/>
+        <line x1="14" y1="1" x2="14" y2="4"/>
+      </svg>
+    </button>
+
     {{-- 🎵 Background Music Toggle --}}
     <button class="floating-contact__btn floating-contact__btn--music" id="bgMusicToggle" title="Bật/Tắt nhạc nền" aria-label="Toggle background music">
       {{-- Volume ON icon --}}
@@ -48,6 +59,22 @@
   <audio id="bgMusicAudio" loop preload="auto">
     <source src="/frontend/audio/ambient.mp3" type="audio/mpeg">
   </audio>
+
+  {{-- ☕ Donate QR Popup --}}
+  <div class="donate-overlay" id="donateOverlay">
+    <div class="donate-popup">
+      <button class="donate-close" id="donateClose" aria-label="Đóng">&times;</button>
+      <div class="donate-header">
+        <span class="donate-coffee-icon">☕</span>
+        <h3>Mời mình cốc cafe</h3>
+      </div>
+      <p class="donate-desc">Nếu bạn thấy website hữu ích, hãy tặng mình cốc cafe để duy trì hoạt động nhé!</p>
+      <div class="donate-qr">
+        <img src="{{ asset('frontend/image/donate-qr.JPG') }}" alt="QR Code chuyển khoản" loading="lazy">
+      </div>
+      <p class="donate-thanks">Cảm ơn bạn rất nhiều! 🙏</p>
+    </div>
+  </div>
 
   {{-- Scroll to Top --}}
   <button class="floating-contact__btn floating-contact__scroll-top" id="scrollToTopBtn" title="Lên đầu trang" aria-label="Scroll to top" style="display:none">
@@ -133,6 +160,17 @@
   border: 2px solid #0099FF;
 }
 
+/* ── Donate specific ── */
+.floating-contact__btn--donate {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: 2px solid #f59e0b;
+  cursor: pointer;
+  outline: none;
+}
+.floating-contact__btn--donate:hover {
+  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.45), 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
 /* ── Music toggle ── */
 .floating-contact__btn--music {
   background: linear-gradient(135deg, #7c3aed, #a855f7);
@@ -178,6 +216,98 @@
 @keyframes bgmGlowPulse {
   0%, 100% { box-shadow: 0 0 12px rgba(168, 85, 247, 0.5), 0 0 24px rgba(168, 85, 247, 0.25); }
   50% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.7), 0 0 40px rgba(168, 85, 247, 0.35); }
+}
+
+/* ── Donate QR Popup ── */
+.donate-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  z-index: 10001;
+  justify-content: center;
+  align-items: center;
+}
+.donate-overlay.is-open {
+  display: flex;
+  animation: donateOverlayIn .25s ease;
+}
+@keyframes donateOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.donate-popup {
+  background: linear-gradient(145deg, #1a1d2e, #0d1018);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(245,158,11,0.08);
+  animation: donatePopIn .3s ease;
+}
+@keyframes donatePopIn {
+  from { transform: scale(0.85) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+.donate-close {
+  position: absolute;
+  top: 10px; right: 14px;
+  font-size: 28px;
+  background: none; border: none;
+  color: var(--muted, #6e778c);
+  cursor: pointer;
+  line-height: 1;
+  transition: color .2s;
+}
+.donate-close:hover { color: #fff; }
+.donate-header {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 10px;
+}
+.donate-coffee-icon { font-size: 32px; }
+.donate-header h3 {
+  font-size: 18px; font-weight: 800;
+  color: #f59e0b; margin: 0;
+}
+.donate-desc {
+  font-size: 13px; color: #909ab2;
+  margin-bottom: 16px; line-height: 1.5;
+}
+.donate-qr {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.donate-qr img {
+  width: 220px; height: auto;
+  border-radius: 8px;
+  display: block;
+}
+.donate-thanks {
+  font-size: 14px; color: #f59e0b;
+  font-weight: 600;
+  margin: 0;
+}
+/* ── Donate link in trend box ── */
+.donate-cafe-link {
+  color: #f59e0b;
+  cursor: pointer;
+  text-decoration: underline;
+  font-style: normal;
+  font-weight: 600;
+  transition: color .2s;
+}
+.donate-cafe-link:hover { color: #fbbf24; }
+
+@media (max-width: 600px) {
+  .donate-popup { padding: 20px 18px; }
+  .donate-qr img { width: 180px; }
 }
 
 /* ── Scroll to Top ── */
@@ -252,11 +382,6 @@
   opacity: 1;
   transform: rotate(0) scale(1);
 }
-
-/* When collapsed, show chat icon (bubble), hide X */
-/* When expanded, show X, hide chat icon */
-/* Default = expanded = X visible. After toggle = collapsed = chat bubble visible */
-/* Actually let's flip: default is expanded (icons visible), toggle collapses */
 
 /* ── Animations ── */
 @keyframes floatContactBounceIn {
@@ -346,6 +471,27 @@
     }
   });
 
+  // ═══ Donate QR Popup ═══
+  var overlay = document.getElementById('donateOverlay');
+  var donateFloatBtn = document.getElementById('donateFloatBtn');
+  var donateClose = document.getElementById('donateClose');
+
+  function openDonate() {
+    if (overlay) overlay.classList.add('is-open');
+  }
+  function closeDonate() {
+    if (overlay) overlay.classList.remove('is-open');
+  }
+
+  if (donateFloatBtn) donateFloatBtn.addEventListener('click', openDonate);
+  if (donateClose) donateClose.addEventListener('click', closeDonate);
+  if (overlay) overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) closeDonate();
+  });
+
+  // Global: cho phép các nút khác gọi openDonate
+  window.openDonatePopup = openDonate;
+
   // ═══ Background Music Logic ═══
   const musicBtn = document.getElementById('bgMusicToggle');
   const audio = document.getElementById('bgMusicAudio');
@@ -372,7 +518,6 @@
           setPlaying(true);
           localStorage.setItem(STORAGE_KEY, 'true');
         }).catch(function() {
-          // Autoplay blocked – will retry on next user interaction
           setPlaying(false);
         });
       }
@@ -390,21 +535,16 @@
     });
 
     // ── Auto-play on first user interaction ──
-    // Trình duyệt chặn autoplay, nhưng cho phép play sau khi user tương tác
-    // → Đợi user scroll/click/chạm bất kỳ đâu → tự động phát nhạc
     function autoPlayOnInteraction() {
       if (autoPlayTriggered) return;
-      // Nếu user đã tắt nhạc trước đó → tôn trọng, không tự phát
       if (localStorage.getItem(STORAGE_KEY) === 'false') return;
       autoPlayTriggered = true;
       tryPlay();
-      // Gỡ listener sau khi đã trigger
       document.removeEventListener('scroll', autoPlayOnInteraction);
       document.removeEventListener('click', autoPlayOnInteraction);
       document.removeEventListener('touchstart', autoPlayOnInteraction);
     }
 
-    // Thử play ngay (sẽ thành công nếu user đã tương tác trước đó / reload)
     if (localStorage.getItem(STORAGE_KEY) !== 'false') {
       var directPlay = audio.play();
       if (directPlay !== undefined) {
@@ -413,7 +553,6 @@
           setPlaying(true);
           localStorage.setItem(STORAGE_KEY, 'true');
         }).catch(function() {
-          // Bị chặn → đăng ký listener chờ user tương tác
           document.addEventListener('scroll', autoPlayOnInteraction, { once: false, passive: true });
           document.addEventListener('click', autoPlayOnInteraction, { once: true });
           document.addEventListener('touchstart', autoPlayOnInteraction, { once: true });
@@ -421,7 +560,6 @@
       }
     }
 
-    // Listen for audio events to keep icon in sync
     audio.addEventListener('play', function() { setPlaying(true); });
     audio.addEventListener('pause', function() { setPlaying(false); });
   }

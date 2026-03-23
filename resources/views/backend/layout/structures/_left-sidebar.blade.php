@@ -16,6 +16,13 @@
           </a>
         </li>
 
+        <li class="sidebar-item {{ selectedMenu('trend-log') }}">
+          <a class="sidebar-link waves-effect waves-dark {{ activeMenu('trend-log') }}" href="{{ backendRoute('trend-log.index') }}">
+            <i class="mdi mdi-robot"></i>
+            <span class="hide-menu">AI Nhận Định</span>
+          </a>
+        </li>
+
         <li class="sidebar-item">
           <a class="sidebar-link waves-effect waves-dark" href="{{ backendRoute('auth.logout') }}">
             <i class="mdi mdi-logout"></i>

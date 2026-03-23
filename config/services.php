@@ -33,4 +33,8 @@ return [
     'ga' => [
         'measurement_id' => "G-B328892T0W",
     ],
+
+    'gemini' => [
+        'api_key' => env('GEMINI_API_KEY'),
+    ],
 ];

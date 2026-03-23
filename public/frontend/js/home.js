@@ -200,19 +200,42 @@
     });
   }
 
+  // ── Synced unit tabs: click Lượng/KG → tất cả brand chuyển theo ──
   document.querySelectorAll('.sv-tab').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
-      var brand = btn.dataset.brand;
-      var unit  = btn.dataset.unit;
-      var mult  = parseInt(btn.dataset.mult) || 1;
-      document.querySelectorAll('.sv-tab[data-brand="' + brand + '"]').forEach(function(b){ b.classList.remove('active'); });
-      btn.classList.add('active');
-      brandUnit[brand] = unit;
-      brandMult[brand] = mult;
-      loadBrandPrice(brand);
-      loadBrandPct(brand, activePeriod);
-      if (activeBrand === brand) { renderChartUnitTabs(); loadSharedChart(); }
+      var clickedUnit = btn.dataset.unit;
+      var clickedMult = parseInt(btn.dataset.mult) || 1;
+      var clickedBrand = btn.dataset.brand;
+
+      var allBrands = ['phuquy', 'ancarat', 'doji', 'kimnganphuc'];
+      allBrands.forEach(function(brand) {
+        var options = brandUnitOptions[brand];
+        // Tìm option khớp unit (KG hoặc LUONG) trong brand này
+        var matchOption = null;
+        for (var i = 0; i < options.length; i++) {
+          if (options[i].unit === clickedUnit && (brand === clickedBrand ? options[i].mult === clickedMult : true)) {
+            matchOption = options[i];
+            break;
+          }
+        }
+        // Brand không hỗ trợ unit này (vd: DOJI không có KG) → giữ nguyên
+        if (!matchOption) return;
+
+        brandUnit[brand] = matchOption.unit;
+        brandMult[brand] = matchOption.mult;
+
+        // Update active tab UI
+        document.querySelectorAll('.sv-tab[data-brand="' + brand + '"]').forEach(function(b){ b.classList.remove('active'); });
+        var matchTab = document.querySelector('.sv-tab[data-brand="' + brand + '"][data-unit="' + matchOption.unit + '"][data-mult="' + matchOption.mult + '"]');
+        if (matchTab) matchTab.classList.add('active');
+
+        loadBrandPrice(brand);
+        loadBrandPct(brand, activePeriod);
+      });
+
+      renderChartUnitTabs();
+      loadSharedChart();
     });
   });
 
@@ -258,6 +281,60 @@
   renderChartUnitTabs();
   loadAllPrices();
   loadSharedChart();
+  loadSilverTrend();
   setInterval(function() { loadAllPrices(); loadSharedChart(); }, 30 * 60 * 1000);
+
+  // ── AI Trend Analysis ──
+  function loadSilverTrend() {
+    var body = document.getElementById('svTrendBody');
+    var time = document.getElementById('svTrendTime');
+    var statsRow = document.getElementById('svTrendStats');
+    var changeEl = document.getElementById('svTrendChange');
+    var highEl = document.getElementById('svTrendHigh');
+    var lowEl = document.getElementById('svTrendLow');
+
+    if (!body) return;
+
+    fetch('/api/silver/trend')
+      .then(function(r) { return r.json(); })
+      .then(function(json) {
+        if (!json.success || !json.data) {
+          body.innerHTML = '<span class="sv-trend-error">⏳ Chưa đủ dữ liệu để phân tích xu hướng.</span>';
+          return;
+        }
+
+        var d = json.data;
+
+        // Hiển thị nội dung phân tích
+        body.classList.add('has-content');
+        body.textContent = d.analysis;
+
+        // Thời gian cập nhật
+        if (time && d.updated_at) {
+          time.textContent = '🕐 ' + d.updated_at;
+        }
+
+        // Stats badges
+        if (statsRow && d.stats) {
+          var s = d.stats;
+          var trendClass = s.trend === 'tăng' ? 'up' : (s.trend === 'giảm' ? 'down' : '');
+
+          if (changeEl) {
+            changeEl.textContent = (s.trend === 'tăng' ? '▲ ' : (s.trend === 'giảm' ? '▼ ' : '')) + s.pct_change;
+            changeEl.className = 'sv-trend-stat ' + trendClass;
+          }
+          if (highEl) {
+            highEl.textContent = '↑ ' + s.high;
+          }
+          if (lowEl) {
+            lowEl.textContent = '↓ ' + s.low;
+          }
+          statsRow.style.display = 'flex';
+        }
+      })
+      .catch(function() {
+        body.innerHTML = '<span class="sv-trend-error">Không thể tải nhận định xu hướng.</span>';
+      });
+  }
 
 })();

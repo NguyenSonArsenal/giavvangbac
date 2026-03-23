@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\SilverPriceController;
+use App\Http\Controllers\Api\SilverTrendController;
 use App\Http\Controllers\Api\AncaratPriceController;
 use App\Http\Controllers\Api\DojiPriceController;
 use App\Http\Controllers\Api\KimNganPhucPriceController;
@@ -13,12 +14,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Internal API – chỉ cho phép gọi từ chính domain của site
 Route::middleware('internal.api')->group(function () {
-
     // Silver price – Phú Quý
     Route::prefix('silver')->group(function () {
         Route::get('current', [SilverPriceController::class, 'currentPrice']);
         Route::get('history', [SilverPriceController::class, 'history']);
         Route::get('percent', [SilverPriceController::class, 'percent']);
+        Route::get('trend', [SilverTrendController::class , 'trend']);
     });
 
     // Silver price – Ancarat
@@ -41,5 +42,4 @@ Route::middleware('internal.api')->group(function () {
         Route::get('history', [KimNganPhucPriceController::class, 'history']);
         Route::get('percent', [KimNganPhucPriceController::class, 'percent']);
     });
-
 });
