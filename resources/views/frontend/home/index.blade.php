@@ -36,7 +36,7 @@
 @endpush
 
 @push('styles')
-<link rel="stylesheet" href="/frontend/css/home.css"/>
+<link rel="stylesheet" href="/frontend/css/home.css?v={{ filemtime(public_path('frontend/css/home.css')) }}"/>
 @endpush
 
 @section('content')
@@ -340,5 +340,5 @@
 @endsection
 
 @push('scripts')
-<script src="/frontend/js/home.js"></script>
+<script src="/frontend/js/home.js?v={{ filemtime(public_path('frontend/js/home.js')) }}"></script>
 @endpush
