@@ -242,7 +242,9 @@ if (!function_exists('activeMenuClient')) {
  */
 function getReadingMinutes($content)
 {
-    return ceil(strlen($content) / 200);
+    $text = strip_tags($content);
+    $wordCount = str_word_count($text);
+    return max(1, ceil($wordCount / 250));
 }
 
 /* ICON SVG AREA */
