@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Models\Base\BaseModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Post extends BaseModel
 {
+    use SoftDeletes;
+
     protected $table = 'posts';
 
     protected $fillable = [
@@ -21,14 +24,12 @@ class Post extends BaseModel
         'view_count',
         'is_featured',
         'status',
-        'published_at',
     ];
 
     protected $casts = [
         'is_featured'  => 'boolean',
         'view_count'   => 'integer',
         'status'       => 'integer',
-        'published_at' => 'datetime',
     ];
 
     /**
@@ -68,7 +69,7 @@ class Post extends BaseModel
     }
 
     /**
-     * Scope: chỉ lấy bài published
+     * Scope: chỉ lấy bài active
      */
     public function scopeActive($query)
     {

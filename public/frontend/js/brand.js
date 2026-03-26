@@ -1,20 +1,21 @@
 /* ═══ brand page scripts ═══ */
 (function () {
-  var JS_COMPUTED = @json($brand['js_computed'] ?? []);
-  var BRAND   = '{{ $brand['key'] }}';
-  var API_KEY = '{{ $brand['api'] }}';
+  var cfg = window.BRAND_CONFIG || {};
+  var JS_COMPUTED = cfg.jsComputed || {};
+  var BRAND   = cfg.brand || '';
+  var API_KEY = cfg.apiKey || '';
   var API_URLS = {
     current: '/api/' + API_KEY + '/current',
     history: '/api/' + API_KEY + '/history',
   };
 
   var activeUnitBtn = document.querySelector('.unit-btn.active');
-  var activeUnit  = activeUnitBtn ? activeUnitBtn.dataset.unit : '{{ $brand['default_unit'] }}';
+  var activeUnit  = activeUnitBtn ? activeUnitBtn.dataset.unit : (cfg.defaultUnit || 'KG');
   var activeMult  = activeUnitBtn ? (parseInt(activeUnitBtn.dataset.mult) || 1) : 1;
   var activeDays  = 7;
   var brandChart  = null;
 
-  var UNIT_LABELS = @json($brand['unit_labels']);
+  var UNIT_LABELS = cfg.unitLabels || {};
 
   var fmt = function(n) { return Number(n).toLocaleString('vi-VN'); };
 

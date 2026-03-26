@@ -192,5 +192,14 @@
 @endsection
 
 @push('scripts')
-<script src="/frontend/js/brand.js"></script>
+<script>
+  window.BRAND_CONFIG = {
+    jsComputed: @json($brand['js_computed'] ?? []),
+    brand: @json($brand['key']),
+    apiKey: @json($brand['api']),
+    defaultUnit: @json($brand['default_unit']),
+    unitLabels: @json($brand['unit_labels'])
+  };
+</script>
+<script src="/frontend/js/brand.js?v={{ filemtime(public_path('frontend/js/brand.js')) }}"></script>
 @endpush

@@ -1,15 +1,78 @@
 @extends('backend.layout.main')
 
-@push('script')
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js" referrerpolicy="origin"></script>
+@push('style')
+<style>
+  .post-form-card {
+    border: none; border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06); overflow: hidden;
+  }
+  .post-form-card .card-body { padding: 28px; }
+  .post-form-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #f0f2f5;
+  }
+  .post-form-header h5 { font-weight: 700; font-size: 17px; color: #2d3748; margin: 0; }
+  .post-form-header .btn-back {
+    background: #edf2f7; color: #4a5568; border: none; border-radius: 8px;
+    padding: 7px 18px; font-size: 13px; font-weight: 600; transition: all .2s;
+  }
+  .post-form-header .btn-back:hover { background: #e2e8f0; }
 
-  <script>
-    window.TINYMCE_UPLOAD_URL = "{{ backendRoute('tinymce_editor.upload') }}";
-    window.TINYMCE_CSRF = "{{ csrf_token() }}";
-    window.EDITOR_CONTENT_CSS = "{{ asset('frontend/css/tinymce_editor.css') }}";
-  </script>
+  .post-section {
+    background: linear-gradient(135deg, #f8f9ff 0%, #eef1f8 100%);
+    border: 1px solid #e2e6f0; border-radius: 10px;
+    padding: 20px; margin-bottom: 20px;
+  }
+  .post-section-title {
+    font-weight: 700; font-size: 13px; color: #667eea;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
+  }
 
-  <script src="{{ asset('backend/js/tinymce_editor.js') }}"></script>
+  .post-form .form-group { margin-bottom: 18px; }
+  .post-form label.col-form-label { font-weight: 600; font-size: 13px; color: #4a5568; }
+  .post-form .form-control {
+    border-radius: 8px; border: 1px solid #d1d9e6;
+    font-size: 13.5px; padding: 8px 14px;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .post-form .form-control:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,.15); }
+  .post-form .form-control[readonly] { background: #f7fafc; opacity: 0.7; cursor: not-allowed; }
+
+  .post-form .btn-save {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff; border: none; border-radius: 8px;
+    padding: 9px 28px; font-weight: 600; font-size: 14px;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .post-form .btn-save:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(102,126,234,.35); color: #fff; }
+  .post-form .btn-cancel {
+    background: #edf2f7; color: #4a5568; border: none; border-radius: 8px;
+    padding: 9px 24px; font-weight: 600; font-size: 14px; transition: all .2s;
+  }
+  .post-form .btn-cancel:hover { background: #e2e8f0; color: #2d3748; }
+
+  .thumb-preview-box { margin-top: 10px; display: inline-block; position: relative; }
+  .thumb-preview-box img { max-width: 220px; border-radius: 10px; border: 2px solid #e2e6f0; }
+  .thumb-remove {
+    position: absolute; top: -8px; right: -8px;
+    width: 24px; height: 24px; background: #e53e3e; color: #fff;
+    border: 2px solid #fff; border-radius: 50%;
+    font-size: 14px; line-height: 20px; text-align: center;
+    cursor: pointer; display: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,.2); transition: transform .15s;
+  }
+  .thumb-remove:hover { transform: scale(1.15); }
+
+  .char-counter { font-size: 12px; margin-top: 4px; }
+
+  .custom-checkbox-featured {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .custom-checkbox-featured input[type="checkbox"] {
+    width: 18px; height: 18px; accent-color: #667eea;
+  }
+</style>
 @endpush
 
 @section('content')
@@ -25,78 +88,206 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
-
-          <div class="card">
+          <div class="card post-form-card">
             <div class="card-body">
               @include('backend.layout.structures._notification')
 
-              <div class="card-body__head d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title mb-0">Thêm bài viết mới</h5>
-                <a href="{{ backendRoute('post.index') }}">
-                  <button type="button" class="btn btn-cyan btn-sm">Quay lại</button>
+              <div class="post-form-header">
+                <h5>✨ Thêm bài viết mới</h5>
+                <a href="{{ backendRoute('post.index') }}" class="btn btn-back">
+                  <i class="mdi mdi-arrow-left"></i> Quay lại
                 </a>
               </div>
 
-              <form class="form-horizontal store-update-entity" action="{{ backendRoute('post.store') }}" method="post">
+              <form class="post-form" action="{{ backendRoute('post.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
-
                 @include('backend.layout.structures._error_validate')
 
-                {{-- Title --}}
-                <div class="form-group row">
-                  <label class="col-md-2 text-right control-label col-form-label">
-                    Tiêu đề <span class="text-danger">(*)</span>
-                  </label>
-                  <div class="col-md-10">
-                    <input type="text"
-                           class="form-control"
-                           name="title"
-                           required
-                           value="{{ old('title') }}"
-                           placeholder="Nhập tiêu đề bài viết">
+                {{-- Thông tin chính --}}
+                <div class="post-section">
+                  <div class="post-section-title"><i class="mdi mdi-information-outline"></i> Thông tin chính</div>
+                  <div style="max-width: 50%;">
+                    <div class="form-group">
+                      <label class="col-form-label">Tiêu đề <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="title" id="title" required
+                             value="{{ old('title') }}" placeholder="Nhập tiêu đề bài viết">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-form-label">Slug (URL SEO)</label>
+                      <input type="text" class="form-control" name="slug" id="slug" readonly
+                             value="{{ old('slug') }}" placeholder="Tự tạo từ tiêu đề">
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-form-label">Mô tả ngắn (excerpt)</label>
+                      <textarea name="excerpt" class="form-control" rows="3"
+                                placeholder="Tóm tắt ngắn hiển thị ở danh sách bài viết">{{ old('excerpt') }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-form-label">Danh mục</label>
+                      <select name="category_id" class="form-control" style="max-width: 280px;">
+                        <option value="">— Chọn danh mục —</option>
+                        @foreach($categories as $cat)
+                          <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @endforeach
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-form-label">Trạng thái</label>
+                      <select name="status" class="form-control" style="max-width: 200px;">
+                        <option value="1" {{ old('status', 1) == 1 ? 'selected' : '' }}>Active</option>
+                        <option value="-1" {{ old('status') == -1 ? 'selected' : '' }}>Inactive</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="custom-checkbox-featured">
+                        <input type="checkbox" name="is_featured" id="is_featured" value="1"
+                               {{ old('is_featured') ? 'checked' : '' }}>
+                        <label for="is_featured" class="col-form-label" style="margin:0;">Bài viết nổi bật</label>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {{-- Description --}}
-                <div class="form-group row">
-                  <label class="col-md-2 text-right control-label col-form-label">Mô tả ngắn</label>
-                  <div class="col-md-10">
-                  <textarea id="des"
-                            name="des"
-                            class="form-control"
-                            rows="3"
-                            placeholder="Tóm tắt ngắn hiển thị ở danh sách">{{ old('des') }}</textarea>
+                {{-- Nội dung --}}
+                <div class="post-section">
+                  <div class="post-section-title"><i class="mdi mdi-file-document-edit-outline"></i> Nội dung bài viết</div>
+                  <textarea id="content" name="content" class="form-control" rows="18">{{ old('content') }}</textarea>
+                  <small class="text-muted d-block mt-2">
+                    Dùng H2/H3 để chia mục; chèn ảnh bằng nút Image hoặc kéo thả.
+                  </small>
+                </div>
+
+                {{-- SEO + Ảnh cạnh nhau --}}
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="post-section">
+                      <div class="post-section-title"><i class="mdi mdi-google"></i> Cấu hình SEO</div>
+
+                      <div class="form-group">
+                        <label class="col-form-label">Meta Title</label>
+                        <input type="text" class="form-control" name="meta_title" id="meta_title" maxlength="65"
+                               value="{{ old('meta_title') }}"
+                               placeholder="Nhập title Google (khuyến nghị 50–60 ký tự, tối đa 65)">
+                        <small id="meta_title_counter" class="char-counter text-muted">0 / 65 ký tự</small>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="col-form-label">Meta Description</label>
+                        <textarea name="meta_description" class="form-control" id="meta_description" maxlength="170" rows="2"
+                                  placeholder="Nhập description Google (khuyến nghị 140–160 ký tự, tối đa 170)">{{ old('meta_description') }}</textarea>
+                        <small id="meta_description_counter" class="char-counter text-muted">0 / 170 ký tự</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="post-section">
+                      <div class="post-section-title"><i class="mdi mdi-image"></i> Ảnh bài viết</div>
+
+                      <div class="thumb-preview-box" style="margin-bottom: 10px;">
+                        <span class="thumb-remove" id="thumb_remove" title="Xóa ảnh">&times;</span>
+                        <img id="thumbnail_preview" src="" alt="Preview" style="display:none;">
+                      </div>
+
+                      <div class="form-group">
+                        <input type="file" class="form-control-file" name="thumbnail" id="thumbnail_input" accept="image/*">
+                        <small class="text-muted">Chấp nhận JPG, PNG, tối đa 2MB</small>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {{-- Content --}}
-                <div class="form-group row">
-                  <label class="col-md-2 text-right control-label col-form-label">
-                    Nội dung <span class="text-danger">(*)</span>
-                  </label>
-                  <div class="col-md-10">
-                    <textarea id="content" name="content" class="form-control" rows="18">{{ old('content') }}</textarea>
-                    <small id="contentError" class="text-danger d-none">Vui lòng nhập nội dung.</small>
-                    <small class="text-muted d-block mt-2">
-                      Dùng H2/H3 để chia mục; chèn ảnh bằng nút Image hoặc kéo thả.
-                    </small>
-                  </div>
-                </div>
-
-                <div class="border-top">
-                  <div class="card-body">
-                    <button type="submit" class="btn btn-success">Lưu</button>
-                    <a href="{{ backendRoute('post.index') }}" class="btn btn-secondary ml-2">Hủy</a>
-                  </div>
+                <div class="d-flex align-items-center mt-3" style="gap: 10px;">
+                  <button type="submit" class="btn btn-save"><i class="mdi mdi-content-save"></i> Lưu bài viết</button>
+                  <a href="{{ backendRoute('post.index') }}" class="btn btn-cancel">Hủy</a>
                 </div>
 
               </form>
-
             </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 @stop
+
+@push('script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+  window.TINYMCE_UPLOAD_URL = "{{ backendRoute('tinymce_editor.upload') }}";
+  window.TINYMCE_CSRF = "{{ csrf_token() }}";
+  window.EDITOR_CONTENT_CSS = "{{ asset('frontend/css/tinymce_editor.css') }}";
+</script>
+<script src="{{ asset('backend/js/tinymce_editor.js') }}"></script>
+
+<script>
+  // Auto slug
+  document.getElementById('title').addEventListener('input', function () {
+    var slug = this.value
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd').replace(/Đ/g, 'd')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/[\s]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+    document.getElementById('slug').value = slug;
+  });
+
+  // Char counter
+  function setupCharCounter(inputId, counterId, max) {
+    var input = document.getElementById(inputId);
+    var counter = document.getElementById(counterId);
+    function update() {
+      var len = input.value.length;
+      counter.textContent = len + ' / ' + max + ' ký tự';
+      if (len > max) {
+        input.classList.add('is-invalid');
+        counter.classList.remove('text-muted');
+        counter.classList.add('text-danger');
+      } else {
+        input.classList.remove('is-invalid');
+        counter.classList.remove('text-danger');
+        counter.classList.add('text-muted');
+      }
+    }
+    input.addEventListener('input', update);
+    update();
+  }
+  setupCharCounter('meta_title', 'meta_title_counter', 65);
+  setupCharCounter('meta_description', 'meta_description_counter', 170);
+
+  // Thumb preview
+  var thumbInput = document.getElementById('thumbnail_input');
+  var thumbPreview = document.getElementById('thumbnail_preview');
+  var thumbRemove = document.getElementById('thumb_remove');
+
+  thumbInput.addEventListener('change', function (e) {
+    if (e.target.files && e.target.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        thumbPreview.src = ev.target.result;
+        thumbPreview.style.display = 'block';
+        thumbRemove.style.display = 'block';
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    } else {
+      thumbPreview.src = '';
+      thumbPreview.style.display = 'none';
+      thumbRemove.style.display = 'none';
+    }
+  });
+
+  thumbRemove.addEventListener('click', function () {
+    thumbInput.value = '';
+    thumbPreview.src = '';
+    thumbPreview.style.display = 'none';
+    thumbRemove.style.display = 'none';
+  });
+</script>
+@endpush

@@ -337,6 +337,93 @@
 
     </div><!-- /sv-main-layout -->
   </section>
+
+  {{-- ══ SECTION: Tin tức & Kiến thức ══ --}}
+  @if($featuredPost || $latestPosts->count())
+  <section class="news-section" id="section-news">
+    <div class="news-header">
+      <div class="news-header-icon">📰</div>
+      <div>
+        <h2>Tin tức & Kiến thức</h2>
+        <p>Cập nhật mới nhất về vàng, bạc & thị trường tài chính</p>
+      </div>
+      <a href="{{ clientRoute('category.index') }}" class="news-cat-link">
+        📂 Danh mục <span>→</span>
+      </a>
+    </div>
+
+    {{-- Category tabs --}}
+    @if($newsCategories->count())
+    <div class="news-cat-tabs">
+      <a href="{{ route('fe.post.index') }}" class="news-cat-tab active">Tất cả</a>
+      @foreach($newsCategories as $cat)
+        <a href="{{ route('fe.category.show', $cat->slug) }}" class="news-cat-tab">{{ $cat->name }}</a>
+      @endforeach
+    </div>
+    @endif
+
+    <div class="news-grid">
+      {{-- Bài nổi bật (trái) --}}
+      @if($featuredPost)
+      <a href="{{ route('fe.post.show', $featuredPost->slug) }}" class="news-featured">
+        <div class="news-featured-img">
+          @if($featuredPost->thumbnail)
+            <img src="{{ asset('storage/' . $featuredPost->thumbnail) }}" alt="{{ $featuredPost->title }}" loading="lazy">
+          @else
+            <div class="news-img-placeholder"><i>📄</i></div>
+          @endif
+          @if($featuredPost->category)
+            <span class="news-cat-badge">{{ $featuredPost->category->name }}</span>
+          @endif
+        </div>
+        <div class="news-featured-body">
+          <h3>{{ $featuredPost->title }}</h3>
+          @if($featuredPost->excerpt)
+            <p class="news-excerpt">{{ Str::limit($featuredPost->excerpt, 120) }}</p>
+          @endif
+          <div class="news-meta">
+            <span>{{ $featuredPost->created_at->format('d/m/Y') }}</span>
+            <span>·</span>
+            <span>{{ number_format($featuredPost->view_count) }} lượt xem</span>
+          </div>
+        </div>
+      </a>
+      @endif
+
+      {{-- Bài mới (phải) --}}
+      @if($latestPosts->count())
+      <div class="news-list">
+        @foreach($latestPosts as $post)
+        <a href="{{ route('fe.post.show', $post->slug) }}" class="news-card">
+          <div class="news-card-img">
+            @if($post->thumbnail)
+              <img src="{{ asset('storage/' . $post->thumbnail) }}" alt="{{ $post->title }}" loading="lazy">
+            @else
+              <div class="news-img-placeholder-sm"><i>📄</i></div>
+            @endif
+          </div>
+          <div class="news-card-body">
+            <h4>{{ Str::limit($post->title, 60) }}</h4>
+            <div class="news-card-meta">
+              @if($post->category)
+                <span class="news-card-cat">{{ $post->category->name }}</span>
+              @endif
+              <span>{{ $post->created_at->format('d/m/Y') }}</span>
+            </div>
+          </div>
+        </a>
+        @endforeach
+      </div>
+      @endif
+    </div>
+
+    <div class="news-view-all">
+      <a href="{{ route('fe.post.index') }}" class="news-view-all-btn">
+        Xem tất cả bài viết <span>→</span>
+      </a>
+    </div>
+  </section>
+  @endif
 @endsection
 
 @push('scripts')

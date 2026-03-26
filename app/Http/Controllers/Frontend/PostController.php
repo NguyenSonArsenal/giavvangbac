@@ -9,13 +9,26 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::orderBy('id', 'desc')->paginate(12);
+        $posts = Post::active()->with('category')->orderBy('id', 'desc')->paginate(12);
         return view('frontend.post.index', compact('posts'));
     }
 
     public function show($slug)
     {
-        $post = Post::where('slug', $slug)->firstOrFail();
-        return view('frontend.post.show', compact('post'));
+        $post = Post::with('category')->where('slug', $slug)->firstOrFail();
+
+        // Bài trước (cũ hơn)
+        $prevPost = Post::active()
+            ->where('id', '<', $post->id)
+            ->orderBy('id', 'desc')
+            ->first(['id', 'title', 'slug']);
+
+        // Bài sau (mới hơn)
+        $nextPost = Post::active()
+            ->where('id', '>', $post->id)
+            ->orderBy('id', 'asc')
+            ->first(['id', 'title', 'slug']);
+
+        return view('frontend.post.show', compact('post', 'prevPost', 'nextPost'));
     }
 }

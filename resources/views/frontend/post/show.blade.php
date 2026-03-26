@@ -75,11 +75,70 @@
   font-size: 14px;
 }
 .post-back:hover { text-decoration: underline; }
+
+/* Category badge */
+.post-header__cat {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-bottom: 14px;
+}
+.post-header__cat a {
+  display: inline-block;
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 700;
+  background: rgba(79,122,248,0.12);
+  border: 1px solid rgba(79,122,248,0.25);
+  color: #7da0fa; text-decoration: none;
+  transition: all .2s;
+}
+.post-header__cat a:hover {
+  background: rgba(79,122,248,0.22);
+  border-color: rgba(79,122,248,0.45);
+  color: #93b4ff; text-decoration: none;
+}
+
+/* Prev / Next */
+.post-nav {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  margin-top: 40px; padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 600px) { .post-nav { grid-template-columns: 1fr; } }
+.post-nav-item a {
+  display: block; padding: 16px 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none; color: inherit;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.post-nav-item a:hover {
+  border-color: rgba(79,122,248,0.4);
+  box-shadow: 0 4px 16px rgba(79,122,248,0.1);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+.post-nav-label {
+  display: block; font-size: 11.5px; font-weight: 700;
+  color: var(--blue); text-transform: uppercase;
+  letter-spacing: 0.04em; margin-bottom: 6px;
+}
+.post-nav-title {
+  display: block; font-size: 14px; font-weight: 600;
+  color: var(--text2); line-height: 1.4;
+  overflow: hidden; text-overflow: ellipsis;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.post-nav-next { text-align: right; }
 </style>
 @endpush
 
 @section('content')
   <div class="post-header">
+    @if($post->category)
+      <div class="post-header__cat">
+        <a href="{{ route('fe.category.show', $post->category->slug) }}">📂 {{ $post->category->name }}</a>
+      </div>
+    @endif
     <h1 class="post-header__title">{{ $post->title }}</h1>
     <div class="post-header__meta">
       📅 {{ $post->created_at->format('d/m/Y H:i') }}
@@ -89,6 +148,32 @@
 
   <div class="post-content">
     {!! $post->content !!}
+  </div>
+
+  @if($post->category)
+    <div class="post-header__cat" style="margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border);">
+      <a href="{{ route('fe.category.show', $post->category->slug) }}">📂 {{ $post->category->name }}</a>
+    </div>
+  @endif
+
+  {{-- Prev / Next navigation --}}
+  <div class="post-nav">
+    <div class="post-nav-item post-nav-prev">
+      @if($prevPost)
+        <a href="{{ route('fe.post.show', $prevPost->slug) }}">
+          <span class="post-nav-label">← Bài trước</span>
+          <span class="post-nav-title">{{ $prevPost->title }}</span>
+        </a>
+      @endif
+    </div>
+    <div class="post-nav-item post-nav-next">
+      @if($nextPost)
+        <a href="{{ route('fe.post.show', $nextPost->slug) }}">
+          <span class="post-nav-label">Bài tiếp theo →</span>
+          <span class="post-nav-title">{{ $nextPost->title }}</span>
+        </a>
+      @endif
+    </div>
   </div>
 
   <a href="{{ route('fe.post.index') }}" class="post-back">← Quay lại danh sách bài viết</a>

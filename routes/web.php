@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Frontend\ArticleController;
 use App\Http\Controllers\Frontend\BrandSilverController;
+use App\Http\Controllers\Frontend\CategoryController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\PostController;
 use App\Http\Controllers\Frontend\SitemapController;
@@ -36,6 +37,9 @@ Route::get('/bac-co-phai-kenh-dau-tu-tot', [ArticleController::class, 'dauTuBac'
 
 // ── Bài viết (CMS) ──
 Route::get('/bai-viet',        [PostController::class, 'index'])->name('post.index');
-Route::get('/bai-viet/{slug}', [PostController::class, 'show'])->name('post.show');
+
+Route::get('category',        [CategoryController::class, 'index'])->name('category.index');
+Route::get('category/{slug}', [CategoryController::class, 'show'])->name('category.show');
+Route::get('post/{slug}', [PostController::class, 'show'])->name('post.show');
 
 
