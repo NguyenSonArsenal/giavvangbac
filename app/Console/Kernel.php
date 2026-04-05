@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\FetchKimNganPhucSilverPrice::class,
 		\App\Console\Commands\FetchAllSilverPrice::class,
 		\App\Console\Commands\GenerateSilverTrend::class,
+		\App\Console\Commands\FetchBtmcGoldPrice::class,
 	];
 
 	/**
@@ -69,7 +70,18 @@ class Kernel extends ConsoleKernel
             ->at('8:35')
             ->withoutOverlapping();
 
-        $schedule->command('silver:fetch-kimnganphuc')
+        // ── Giá Vàng BTMC ────────────────────────────────────────────────────
+        $schedule->command('gold:fetch-btmc')
+            ->everyTenMinutes()
+            ->between('8:00', '19:00')
+            ->withoutOverlapping();
+            
+        $schedule->command('gold:fetch-btmc')
+            ->weekdays()
+            ->at('8:35')
+            ->withoutOverlapping();
+
+        $schedule->command('gold:fetch-btmc')
             ->saturdays()
             ->at('8:35')
             ->withoutOverlapping();
