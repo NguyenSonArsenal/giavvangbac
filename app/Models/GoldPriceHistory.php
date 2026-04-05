@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Builder;
 
-class SilverPriceHistory extends Model
+class GoldPriceHistory extends Model
 {
     protected $table = 'metal_prices';
 
@@ -23,12 +22,12 @@ class SilverPriceHistory extends Model
     protected static function booted()
     {
         static::addGlobalScope('metal_type', function (Builder $builder) {
-            $builder->where('metal_type', 'silver');
+            $builder->where('metal_type', 'gold');
         });
 
         static::creating(function ($model) {
             if (empty($model->metal_type)) {
-                $model->metal_type = 'silver';
+                $model->metal_type = 'gold';
             }
         });
     }
