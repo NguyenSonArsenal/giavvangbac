@@ -720,3 +720,184 @@
       color: #fff; border-color: transparent;
       box-shadow: 0 2px 8px rgba(79,122,248,0.35);
     }
+
+/* 
+   GOLD PRICE TABLE  Bảng kẻ giá vàng thương hiệu
+    */
+
+/* Layout: bảng trên, chart dưới */
+.gold-table-chart-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Wrapper bảng */
+.gold-price-table-wrap {
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid rgba(245,197,24,0.15);
+    background: var(--bg2, #0f172a);
+}
+
+/* Bảng */
+.gold-price-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+}
+
+/* Header */
+.gold-price-table thead tr {
+    background: linear-gradient(90deg, rgba(245,197,24,0.12) 0%, rgba(217,119,6,0.08) 100%);
+    border-bottom: 1px solid rgba(245,197,24,0.2);
+}
+.gold-price-table thead th {
+    padding: 11px 14px;
+    color: #f59e0b;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-align: center;
+}
+.gold-price-table thead th.col-brand,
+.gold-price-table thead th.col-type  { text-align: left; }
+
+/* Body rows */
+.gold-price-table tbody tr.gold-tr {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background .18s;
+}
+.gold-price-table tbody tr.gold-tr:last-child { border-bottom: none; }
+
+/* Phân cách giữa 2 thương hiệu */
+.gold-price-table tbody tr.gold-tr-btmh {
+    border-top: 2px solid rgba(245,197,24,0.15);
+}
+
+/* Hover & active */
+.gold-tr-clickable:hover  { background: rgba(245,197,24,0.05); cursor: pointer; }
+.gold-tr-clickable.active { background: rgba(245,197,24,0.09); }
+.gold-tr-clickable.active .gold-price-val {
+    text-shadow: 0 0 8px rgba(245,197,24,0.3);
+}
+
+/* TD chung */
+.gold-price-table td {
+    padding: 12px 14px;
+    vertical-align: middle;
+    text-align: center;
+    color: var(--text, #e2e8f0);
+}
+.gold-price-table td.col-brand,
+.gold-price-table td.col-type { text-align: left; }
+
+/*  Cột thương hiệu  */
+.gold-brand-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 90px;
+}
+.gold-brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.gold-brand-name {
+    font-weight: 700;
+    font-size: 12.5px;
+    line-height: 1.4;
+}
+
+/*  Cột loại vàng  */
+.gold-type-label {
+    display: block;
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 13px;
+}
+.gold-type-sub {
+    display: block;
+    font-size: 11px;
+    color: var(--muted, #64748b);
+    margin-top: 2px;
+}
+
+/*  Giá mua/bán  */
+.gold-price-val {
+    font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    display: block;
+}
+.gold-price-val.gold-buy  { color: #22c55e; }
+.gold-price-val.gold-sell { color: #f87171; }
+
+/*  Chênh lệch  */
+.gold-spread-val {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #f59e0b;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/*  Cập nhật  */
+.gold-price-table td.col-updated {
+    font-size: 11px;
+    color: var(--muted, #64748b);
+    white-space: nowrap;
+}
+
+/*  Chart bên dưới bảng  */
+.gold-chart-wrap {
+    border-radius: 14px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .gold-price-table thead th,
+    .gold-price-table td {
+        padding: 9px 10px;
+    }
+    .gold-price-val { font-size: 12.5px; }
+    .gold-brand-name { font-size: 11.5px; }
+    .gold-price-table td.col-updated { display: none; }
+    .gold-price-table thead th.col-updated { display: none; }
+}
+
+/* 
+   GOLD TABLE  Cao nhất / Thấp nhất badges
+    */
+.gold-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-left: 7px;
+    vertical-align: middle;
+    white-space: nowrap;
+    animation: gold-badge-pop .25s ease;
+}
+@keyframes gold-badge-pop {
+    0%   { transform: scale(.7); opacity: 0; }
+    70%  { transform: scale(1.08); }
+    100% { transform: scale(1);   opacity: 1; }
+}
+.gold-badge-high {
+    background: rgba(34,197,94,.18);
+    color: #4ade80;
+    border: 1px solid rgba(34,197,94,.35);
+}
+.gold-badge-low {
+    background: rgba(239,68,68,.16);
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,.3);
+}

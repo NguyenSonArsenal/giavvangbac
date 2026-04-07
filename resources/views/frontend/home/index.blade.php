@@ -168,85 +168,147 @@
     </div>
   </section>
 
-  <!-- ══ VÀNG THƯƠNG HIỆU: 2 thương hiệu + shared chart ══ -->
+  <!-- ══ VÀNG THƯƠNG HIỆU: Bảng kẻ + shared chart ══ -->
   <section class="gold-compact-section">
     <div class="sv-section-head">
       <div class="sv-section-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff;">🥇</div>
       <div>
         <h2>Giá Vàng Thương Hiệu</h2>
-        <p>Bảo Tín Minh Châu · Bảo Tín Mạnh Hải · Cập nhật định kỳ</p>
+        <p>Bảo Tín Minh Châu · Bảo Tín Mạnh Hải · Phú Quý · SJC · Cập nhật định kỳ</p>
       </div>
     </div>
 
-    <div class="sv-main-layout">
-      <!-- Gold Brand Cards -->
-      <div class="sv-brands-grid">
-        <!-- BTMC card -->
-        <div class="gold-brand-card active" id="gold-card-btmc" data-brand="btmc">
-          <div class="sv-card-head">
-            <div class="sv-card-logo" style="background:linear-gradient(135deg,#f59e0b,#d97706);font-size:10px;font-weight:800;color:#fff;letter-spacing:.03em;">BTMC</div>
-            <div class="sv-card-info">
-              <div class="sv-card-name" style="color:#f59e0b;">Bảo Tín Minh Châu</div>
-              <div class="sv-card-sub" id="btmc-updated">Đang tải...</div>
-            </div>
-          </div>
-          <div class="sv-card-tabs">
-            <button class="gold-tab active" data-brand="btmc" data-unit="NHAN_TRON">Nhẫn tròn trơn</button>
-            <button class="gold-tab"        data-brand="btmc" data-unit="MIENG_VRTL">Vàng miếng</button>
-          </div>
-          <div class="sv-card-prices">
-            <div class="sv-card-price-col">
-              <div class="sv-cprice-label">Mua vào</div>
-              <div class="sv-cprice-buy" id="btmc-buy">–</div>
-            </div>
-            <div class="sv-card-price-col">
-              <div class="sv-cprice-label">Bán ra</div>
-              <div class="sv-cprice-sell" id="btmc-sell">–</div>
-            </div>
-          </div>
-          <div class="sv-card-bottom-row">
-            <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="btmc-spread">–</span></div>
-          </div>
-        </div>
+    <div class="gold-table-chart-layout">
 
-        <!-- BTMH card -->
-        <div class="gold-brand-card" id="gold-card-btmh" data-brand="btmh">
-          <div class="sv-card-head">
-            <div class="sv-card-logo" style="background:linear-gradient(135deg,#dc2626,#991b1b);font-size:10px;font-weight:800;color:#fff;letter-spacing:.03em;">BTMH</div>
-            <div class="sv-card-info">
-              <div class="sv-card-name" style="color:#f87171;">Bảo Tín Mạnh Hải</div>
-              <div class="sv-card-sub" id="btmh-updated">Đang tải...</div>
-            </div>
-          </div>
-          <div class="sv-card-tabs">
-            <button class="gold-tab btmh-tab active" data-brand="btmh" data-unit="KGB">Nhẫn Kim Gia Bảo 24K</button>
-          </div>
-          <div class="sv-card-prices">
-            <div class="sv-card-price-col">
-              <div class="sv-cprice-label">Mua vào</div>
-              <div class="sv-cprice-buy" id="btmh-buy">–</div>
-            </div>
-            <div class="sv-card-price-col">
-              <div class="sv-cprice-label">Bán ra</div>
-              <div class="sv-cprice-sell" id="btmh-sell">–</div>
-            </div>
-          </div>
-          <div class="sv-card-bottom-row">
-            <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="btmh-spread">–</span></div>
-            <div style="font-size:10px;color:var(--muted);">đồng/chỉ</div>
-          </div>
-        </div>
-
-      </div><!-- /sv-brands-grid -->
+      <!-- ── Bảng giá vàng ── -->
+      <div class="gold-price-table-wrap">
+        <table class="gold-price-table">
+          <thead>
+            <tr>
+              <th class="col-brand">Thương hiệu</th>
+              <th class="col-type">Loại vàng</th>
+              <th class="col-buy">Mua vào</th>
+              <th class="col-sell">Bán ra</th>
+              <th class="col-spread">Chênh lệch</th>
+              <th class="col-updated">Cập nhật</th>
+            </tr>
+          </thead>
+          <tbody id="gold-table-body">
+            <!-- BTMC – Nhẫn tròn trơn -->
+            <tr class="gold-tr gold-tr-btmc gold-tr-clickable active" data-brand="btmc" data-unit="NHAN_TRON">
+              <td class="col-brand" rowspan="2">
+                <div class="gold-brand-badge gold-brand-btmc">
+                  <span class="gold-brand-dot" style="background:linear-gradient(135deg,#f59e0b,#d97706)"></span>
+                  <span class="gold-brand-name" style="color:#f59e0b;">Bảo Tín<br>Minh Châu</span>
+                </div>
+              </td>
+              <td class="col-type">
+                <span class="gold-type-label">Nhẫn tròn trơn</span>
+                <span class="gold-type-sub">VRTl · 999.9 (24k)</span>
+              </td>
+              <td class="col-buy"><span class="gold-price-val gold-buy" id="btmc-nhan-buy">–</span></td>
+              <td class="col-sell"><span class="gold-price-val gold-sell" id="btmc-nhan-sell">–</span></td>
+              <td class="col-spread"><span class="gold-spread-val" id="btmc-nhan-spread">–</span></td>
+              <td class="col-updated" id="btmc-nhan-updated">–</td>
+            </tr>
+            <!-- BTMC – Vàng miếng -->
+            <tr class="gold-tr gold-tr-btmc gold-tr-clickable" data-brand="btmc" data-unit="MIENG_VRTL">
+              <td class="col-type">
+                <span class="gold-type-label">Vàng miếng VRTL</span>
+                <span class="gold-type-sub">Vàng Rồng Thăng Long · 24k</span>
+              </td>
+              <td class="col-buy"><span class="gold-price-val gold-buy" id="btmc-mieng-buy">–</span></td>
+              <td class="col-sell"><span class="gold-price-val gold-sell" id="btmc-mieng-sell">–</span></td>
+              <td class="col-spread"><span class="gold-spread-val" id="btmc-mieng-spread">–</span></td>
+              <td class="col-updated" id="btmc-mieng-updated">–</td>
+            </tr>
+            <!-- BTMH – Kim Gia Bảo -->
+            <tr class="gold-tr gold-tr-btmh gold-tr-clickable" data-brand="btmh" data-unit="KGB">
+              <td class="col-brand">
+                <div class="gold-brand-badge gold-brand-btmh">
+                  <span class="gold-brand-dot" style="background:linear-gradient(135deg,#dc2626,#991b1b)"></span>
+                  <span class="gold-brand-name" style="color:#f87171;">Bảo Tín<br>Mạnh Hải</span>
+                </div>
+              </td>
+              <td class="col-type">
+                <span class="gold-type-label">Nhẫn Kim Gia Bảo 24K</span>
+                <span class="gold-type-sub">đồng/chỉ</span>
+              </td>
+              <td class="col-buy"><span class="gold-price-val gold-buy" id="btmh-buy">–</span></td>
+              <td class="col-sell"><span class="gold-price-val gold-sell" id="btmh-sell">–</span></td>
+              <td class="col-spread"><span class="gold-spread-val" id="btmh-spread">–</span></td>
+              <td class="col-updated" id="btmh-updated">–</td>
+            </tr>
+            <!-- PHÚ QUÝ – Nhẫn tròn 999.9 -->
+            <tr class="gold-tr gold-tr-phuquy gold-tr-clickable" data-brand="phuquy" data-unit="NHAN_TRON">
+              <td class="col-brand" rowspan="2">
+                <div class="gold-brand-badge gold-brand-phuquy">
+                  <span class="gold-brand-dot" style="background:linear-gradient(135deg,#c0392b,#922b21)"></span>
+                  <span class="gold-brand-name" style="color:#ef5350;">Phú Quý<br>Group</span>
+                </div>
+              </td>
+              <td class="col-type">
+                <span class="gold-type-label">Nhẫn tròn Phú Quý 999.9</span>
+                <span class="gold-type-sub">(Đơn vị: Đồng/Chỉ)</span>
+              </td>
+              <td class="col-buy"><span class="gold-price-val gold-buy" id="pq-nhan-buy">–</span></td>
+              <td class="col-sell"><span class="gold-price-val gold-sell" id="pq-nhan-sell">–</span></td>
+              <td class="col-spread"><span class="gold-spread-val" id="pq-nhan-spread">–</span></td>
+              <td class="col-updated" id="pq-nhan-updated">–</td>
+            </tr>
+            <!-- PHÚ QUÝ – Vàng miếng SJC -->
+            <tr class="gold-tr gold-tr-phuquy gold-tr-clickable" data-brand="phuquy" data-unit="SJC">
+              <td class="col-type">
+                <span class="gold-type-label">Vàng miếng SJC</span>
+                <span class="gold-type-sub">(Đơn vị: Đồng/Chỉ)</span>
+              </td>
+              <td class="col-buy"><span class="gold-price-val gold-buy" id="pq-sjc-buy">–</span></td>
+              <td class="col-sell"><span class="gold-price-val gold-sell" id="pq-sjc-sell">–</span></td>
+              <td class="col-spread"><span class="gold-spread-val" id="pq-sjc-spread">–</span></td>
+              <td class="col-updated" id="pq-sjc-updated">–</td>
+            </tr>
+            <!-- SJC – Vàng miếng 1L/10L/1KG -->
+            <tr class="gold-tr gold-tr-sjc gold-tr-clickable" data-brand="sjc" data-unit="VANG_MIEN">
+              <td class="col-brand" rowspan="2">
+                <div class="gold-brand-badge gold-brand-sjc">
+                  <span class="gold-brand-dot" style="background:linear-gradient(135deg,#1565c0,#0d47a1)"></span>
+                  <span class="gold-brand-name" style="color:#64b5f6;">SJC<br>Official</span>
+                </div>
+              </td>
+              <td class="col-type">
+                <span class="gold-type-label">Vàng SJC 1L, 10L, 1KG</span>
+                <span class="gold-type-sub">VND/Lượng</span>
+              </td>
+              <td class="col-buy"><span class="gold-price-val gold-buy" id="sjc-mien-buy">–</span></td>
+              <td class="col-sell"><span class="gold-price-val gold-sell" id="sjc-mien-sell">–</span></td>
+              <td class="col-spread"><span class="gold-spread-val" id="sjc-mien-spread">–</span></td>
+              <td class="col-updated" id="sjc-mien-updated">–</td>
+            </tr>
+            <!-- SJC – Vàng nhẫn 99,99% -->
+            <tr class="gold-tr gold-tr-sjc gold-tr-clickable" data-brand="sjc" data-unit="NHAN_TRON">
+              <td class="col-type">
+                <span class="gold-type-label">Vàng nhẫn SJC 99,99%</span>
+                <span class="gold-type-sub">VND/Lượng</span>
+              </td>
+              <td class="col-buy"><span class="gold-price-val gold-buy" id="sjc-nhan-buy">–</span></td>
+              <td class="col-sell"><span class="gold-price-val gold-sell" id="sjc-nhan-sell">–</span></td>
+              <td class="col-spread"><span class="gold-spread-val" id="sjc-nhan-spread">–</span></td>
+              <td class="col-updated" id="sjc-nhan-updated">–</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- ── Shared Chart ── -->
-      <div class="sv-shared-chart-wrap" style="border-color:rgba(245,197,24,0.2);">
+      <div class="sv-shared-chart-wrap gold-chart-wrap" style="border-color:rgba(245,197,24,0.2);">
         <div class="sv-shared-chart-bar">
 
           <!-- Brand switcher -->
           <div class="sv-chart-brand-tabs">
-            <button class="gold-chart-brand active" data-brand="btmc" id="gold-chart-brand-btmc">Bảo Tín Minh Châu</button>
-            <button class="gold-chart-brand"        data-brand="btmh" id="gold-chart-brand-btmh">Bảo Tín Mạnh Hải</button>
+            <button class="gold-chart-brand active" data-brand="btmc"   id="gold-chart-brand-btmc">Bảo Tín Minh Châu</button>
+            <button class="gold-chart-brand"        data-brand="btmh"   id="gold-chart-brand-btmh">Bảo Tín Mạnh Hải</button>
+            <button class="gold-chart-brand"        data-brand="phuquy" id="gold-chart-brand-phuquy">Phú Quý</button>
+            <button class="gold-chart-brand"        data-brand="sjc"    id="gold-chart-brand-sjc">SJC</button>
           </div>
 
           <!-- Period tabs -->
@@ -261,7 +323,7 @@
           <!-- Unit tabs (ẩn khi xem BTMH) -->
           <div class="sv-chart-unit-label" id="gold-chart-unit-lbl">VND/Lượng</div>
           <div class="sv-chart-unit-tabs" id="gold-chart-unit-tabs">
-            <button class="gold-chart-unit-btn active" data-unit="NHAN_TRON">Nhẫn tròn trơn</button>
+            <button class="gold-chart-unit-btn active" data-unit="NHAN_TRON">Nhẫn tròn</button>
             <button class="gold-chart-unit-btn"        data-unit="MIENG_VRTL">Vàng miếng</button>
           </div>
         </div>
@@ -274,7 +336,7 @@
         <p class="sv-footnote" id="gold-chart-footnote">Nguồn: Bảo Tín Minh Châu · VND/Lượng</p>
       </div>
 
-    </div><!-- /sv-main-layout -->
+    </div><!-- /gold-table-chart-layout -->
   </section>
 
   <!-- ══ BẠC THƯƠNG HIỆU: Compact 3-column ══ -->

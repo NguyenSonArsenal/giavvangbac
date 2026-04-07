@@ -43,7 +43,7 @@ class FetchBtmcGoldPrice extends Command
             }
 
             $str = ltrim($res->body(), "\xEF\xBB\xBF");
-            
+
             $dataList = null;
 
             if (str_starts_with(trim($str), '{')) {
@@ -74,11 +74,20 @@ class FetchBtmcGoldPrice extends Command
 
             // Target keywords to unit codes
             $targets = [
-                'VÀNG MIẾNG VRTL' => 'MIENG_VRTL',
-                'NHẪN TRÒN TRƠN'  => 'NHAN_TRON',
+//                'VÀNG MIẾNG VRTL' => 'MIENG_VRTL',
+//                'NHẪN TRÒN TRƠN'  => 'NHAN_TRON',
+
+                'VÀNG MIẾNG VRTL (Vàng Rồng Thăng Long)' => 'MIENG_VRTL',
+                'NHẪN TRÒN TRƠN (Vàng Rồng Thăng Long)'  => 'NHAN_TRON',
             ];
 
+            // Track keyword nào đã được xử lý (API trả về mới nhất trước, chỉ lấy bản đầu tiên)
+            $found = array_fill_keys(array_keys($targets), false);
+
             foreach ($dataList as $row) {
+                // Nếu tất cả target đã tìm thấy thì dừng sớm
+                if (!in_array(false, $found, true)) break;
+
                 // Determine row index to access dynamic attributes like n_3, pb_3...
                 // If it's from JSON parser, keys might be "@row" or "row"
                 $rowId = null;
@@ -86,24 +95,42 @@ class FetchBtmcGoldPrice extends Command
                 elseif (isset($row['@row'])) $rowId = $row['@row'];
 
                 if (!$rowId) continue;
-                
+
                 $nameAttr1 = "n_{$rowId}";
                 $nameAttr2 = "@n_{$rowId}";
-                
+
                 $nameKey = isset($row[$nameAttr1]) ? $nameAttr1 : (isset($row[$nameAttr2]) ? $nameAttr2 : null);
                 if (!$nameKey) continue;
 
-                $buyKey = isset($row["pb_{$rowId}"]) ? "pb_{$rowId}" : "@pb_{$rowId}";
+                $buyKey  = isset($row["pb_{$rowId}"]) ? "pb_{$rowId}" : "@pb_{$rowId}";
                 $sellKey = isset($row["ps_{$rowId}"]) ? "ps_{$rowId}" : "@ps_{$rowId}";
+                $dateKey = isset($row["d_{$rowId}"])  ? "d_{$rowId}"  : (isset($row["@d_{$rowId}"]) ? "@d_{$rowId}" : null);
 
-                $name = mb_strtoupper((string) $row[$nameKey], 'UTF-8');
-                $buy  = (int) ($row[$buyKey] ?? 0);
+                $name = $row[$nameKey];
+                $buy  = (int) ($row[$buyKey]  ?? 0);
                 $sell = (int) ($row[$sellKey] ?? 0);
+
+                // Parse thời gian từ API (format: "d/m/Y H:i", VD: "07/04/2026 15:16")
+                $apiDateRaw = $dateKey ? (string)($row[$dateKey] ?? '') : '';
+                $recordedAt = null;
+                if ($apiDateRaw) {
+                    try {
+                        $recordedAt = \Carbon\Carbon::createFromFormat('d/m/Y H:i', trim($apiDateRaw));
+                    } catch (\Exception) {
+                        $recordedAt = null;
+                    }
+                }
+                $recordedAt = $recordedAt ?? now();
 
                 // Tìm xem name có chứa target keyword không
                 foreach ($targets as $keyword => $unit) {
+                    // Đã xử lý keyword này rồi (bản ghi mới nhất) → bỏ qua
+                    if ($found[$keyword]) continue;
+
                     if (strpos($name, $keyword) !== false) {
-                        // Found! Lưu data
+                        // Đánh dấu đã tìm thấy bản ghi đầu tiên (mới nhất) cho keyword này
+                        $found[$keyword] = true;
+
                         $lastRecord = GoldPriceHistory::where('source', 'btmc')
                             ->where('unit', $unit)
                             ->orderByDesc('recorded_at')
@@ -117,15 +144,14 @@ class FetchBtmcGoldPrice extends Command
                                 'unit'        => $unit,
                                 'buy_price'   => $buy,
                                 'sell_price'  => $sell,
-                                'price_date'  => now()->toDateString(),
-                                'recorded_at' => now(),
+                                'price_date'  => $recordedAt->toDateString(),
+                                'recorded_at' => $recordedAt,
                             ]);
                             $this->info("  ✅ History [{$unit}] saved (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ')');
                         }
                     }
                 }
             }
-
         } catch (\Exception $e) {
             $this->error("  💥 Error: " . $e->getMessage());
             Log::error('FetchBtmcGoldPrice', ['error' => $e->getMessage()]);

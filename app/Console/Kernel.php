@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\GenerateSilverTrend::class,
 		\App\Console\Commands\FetchBtmcGoldPrice::class,
 		\App\Console\Commands\FetchBtmhGoldPrice::class,
+		\App\Console\Commands\FetchPhuquyGoldPrice::class,
+		\App\Console\Commands\FetchSjcGoldPrice::class,
 		\App\Console\Commands\SeedBtmhGoldPrice::class,
 	];
 
@@ -100,6 +102,38 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping();
 
         $schedule->command('gold:fetch-btmh')
+            ->saturdays()
+            ->at('8:35')
+            ->withoutOverlapping();
+
+        // ── Giá Vàng Phú Quý (banggia.phuquygroup.vn) ────────────────────────────
+        $schedule->command('gold:fetch-phuquy')
+            ->everyTenMinutes()
+            ->between('8:00', '19:00')
+            ->withoutOverlapping();
+
+        $schedule->command('gold:fetch-phuquy')
+            ->weekdays()
+            ->at('8:35')
+            ->withoutOverlapping();
+
+        $schedule->command('gold:fetch-phuquy')
+            ->saturdays()
+            ->at('8:35')
+            ->withoutOverlapping();
+
+        // ── Giá Vàng SJC (sjc.com.vn) ────────────────────────────────
+        $schedule->command('gold:fetch-sjc')
+            ->everyTenMinutes()
+            ->between('8:00', '19:00')
+            ->withoutOverlapping();
+
+        $schedule->command('gold:fetch-sjc')
+            ->weekdays()
+            ->at('8:35')
+            ->withoutOverlapping();
+
+        $schedule->command('gold:fetch-sjc')
             ->saturdays()
             ->at('8:35')
             ->withoutOverlapping();

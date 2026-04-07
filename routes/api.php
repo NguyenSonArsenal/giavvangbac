@@ -55,4 +55,16 @@ Route::middleware('internal.api')->group(function () {
         Route::get('current', [BtmhGoldController::class, 'currentPrice']);
         Route::get('history', [BtmhGoldController::class, 'history']);
     });
+
+    // Gold price – Phú Quý
+    Route::prefix('gold/phuquy')->group(function () {
+        Route::get('current', [App\Http\Controllers\Api\PhuquyGoldController::class, 'currentPrice']);
+        Route::get('history', [App\Http\Controllers\Api\PhuquyGoldController::class, 'history']);
+    });
+
+    // Gold price – SJC
+    Route::prefix('gold/sjc')->group(function () {
+        Route::get('current', [App\Http\Controllers\Api\SjcGoldController::class, 'currentPrice']);
+        Route::get('history', [App\Http\Controllers\Api\SjcGoldController::class, 'history']);
+    });
 });

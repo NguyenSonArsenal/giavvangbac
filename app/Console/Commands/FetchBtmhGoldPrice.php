@@ -46,9 +46,10 @@ class FetchBtmhGoldPrice extends Command
                     continue;
                 }
 
-                $data  = $res->json();
-                $rates = $data['data']['rate']  ?? [];
-                $sells = $data['data']['sell']  ?? [];
+                $data   = $res->json();
+                $rates  = $data['data']['rate']  ?? [];
+                $sells  = $data['data']['sell']  ?? [];
+                $labels = $data['data']['dates'] ?? $data['data']['labels'] ?? $data['data']['time'] ?? [];
 
                 if (empty($rates)) {
                     $this->warn("  ⚠ Không có data intraday cho {$goldType}");
@@ -58,6 +59,20 @@ class FetchBtmhGoldPrice extends Command
                 // Lấy entry cuối cùng (giá mới nhất trong ngày)
                 $lastRate = (int) round((float) end($rates));
                 $lastSell = (int) round((float) end($sells));
+
+                // Parse timestamp thực tế từ API (thử nhiều key phổ biến)
+                $lastLabel = !empty($labels) ? end($labels) : null;
+                $recordedAt = null;
+                if ($lastLabel) {
+                    foreach (['H:i d/m/Y', 'd/m/Y H:i', 'Y-m-d H:i:s', 'Y-m-d H:i', 'H:i'] as $fmt) {
+                        try {
+                            $dt = \Carbon\Carbon::createFromFormat($fmt, trim($lastLabel));
+                            $recordedAt = $dt;
+                            break;
+                        } catch (\Exception) {}
+                    }
+                }
+                $recordedAt = $recordedAt ?? now();
 
                 if ($lastRate <= 0 && $lastSell <= 0) {
                     $this->warn("  ⚠ Giá = 0, bỏ qua");
@@ -85,11 +100,11 @@ class FetchBtmhGoldPrice extends Command
                         'unit'        => $unit,
                         'buy_price'   => $lastRate,
                         'sell_price'  => $lastSell,
-                        'price_date'  => now()->toDateString(),
-                        'recorded_at' => now(),
+                        'price_date'  => $recordedAt->toDateString(),
+                        'recorded_at' => $recordedAt,
                     ]);
                     $this->info("  ✅ [{$unit}] saved (Mua={$buyForLog} Bán={$sellForLog})");
-                    file_put_contents($logFile, "[" . now()->format('Y-m-d H:i:s') . "] ✅ {$unit}: Mua={$buyForLog} Bán={$sellForLog}\n", FILE_APPEND);
+                    file_put_contents($logFile, "[" . $recordedAt->format('Y-m-d H:i:s') . "] ✅ {$unit}: Mua={$buyForLog} Bán={$sellForLog}\n", FILE_APPEND);
                 }
 
             } catch (\Exception $e) {
