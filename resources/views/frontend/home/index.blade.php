@@ -200,7 +200,7 @@
                   <span class="gold-brand-dot" style="background:linear-gradient(135deg,#f59e0b,#d97706)"></span>
                   <span class="gold-brand-name" style="color:#f59e0b;">Bảo Tín<br>Minh Châu</span>
                 </div>
-                <div class="brand-updated-time" id="btmc-updated">–</div>
+                <div class="brand-updated-time" id="gold-btmc-updated">–</div>
               </td>
               <td class="col-type">
                 <span class="gold-type-label">Nhẫn tròn trơn</span>
@@ -233,7 +233,7 @@
                   <span class="gold-brand-dot" style="background:linear-gradient(135deg,#dc2626,#991b1b)"></span>
                   <span class="gold-brand-name" style="color:#f87171;">Bảo Tín<br>Mạnh Hải</span>
                 </div>
-                <div class="brand-updated-time" id="btmh-updated">–</div>
+                <div class="brand-updated-time" id="gold-btmh-updated">–</div>
               </td>
               <td class="col-type">
                 <span class="gold-type-label">Nhẫn Kim Gia Bảo 24K</span>
@@ -253,7 +253,7 @@
                   <span class="gold-brand-dot" style="background:linear-gradient(135deg,#c0392b,#922b21)"></span>
                   <span class="gold-brand-name" style="color:#ef5350;">Phú Quý Group</span>
                 </div>
-                <div class="brand-updated-time" id="pq-updated">–</div>
+                <div class="brand-updated-time" id="gold-pq-updated">–</div>
               </td>
               <td class="col-type">
                 <span class="gold-type-label">Nhẫn tròn Phú Quý 999.9</span>
@@ -286,7 +286,7 @@
                   <span class="gold-brand-dot" style="background:linear-gradient(135deg,#1565c0,#0d47a1)"></span>
                   <span class="gold-brand-name" style="color:#64b5f6;">SJC Official</span>
                 </div>
-                <div class="brand-updated-time" id="sjc-updated">–</div>
+                <div class="brand-updated-time" id="gold-sjc-updated">–</div>
               </td>
               <td class="col-type">
                 <span class="gold-type-label">Vàng SJC 1L, 10L, 1KG</span>
