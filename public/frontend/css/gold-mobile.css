@@ -163,3 +163,51 @@
         padding: 16px 16px 16px 16px !important;
     }
 }
+
+/* ═══════════════════════════
+   GOLD TABLE – Fix tràn cột Bán ra trên màn nhỏ (≤414px)
+   ═════════════════════════════════════════════════════════════ */
+@media (max-width: 414px) {
+
+    /* Badge THẤP NHẤT / CAO NHẤT: xuống dòng dưới giá, không inline */
+    .gold-badge {
+        display: block !important;
+        margin: 3px 0 0 0 !important;
+        width: fit-content !important;
+        font-size: 9px !important;
+        padding: 1px 5px !important;
+    }
+
+    /* Giá bán: co font nhỏ hơn chút */
+    .gold-price-val {
+        font-size: 11.5px !important;
+    }
+
+    /* Cột mua/bán padding nhỏ hơn */
+    .gold-price-table td.col-buy,
+    .gold-price-table td.col-sell,
+    .gold-price-table th.col-buy,
+    .gold-price-table th.col-sell {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+
+    /* Cột TH thương hiệu nhỏ lại */
+    .gold-price-table td.col-brand,
+    .gold-price-table th.col-brand {
+        padding-left: 8px !important;
+        padding-right: 4px !important;
+    }
+
+    /* Cột loại vàng */
+    .gold-price-table td.col-type,
+    .gold-price-table th.col-type {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    /* Header text nhỏ hơn */
+    .gold-price-table thead th {
+        font-size: 10px !important;
+    }
+}
