@@ -28,9 +28,10 @@ class FetchGoldPhuquy extends Command
     {
         $logFile = storage_path('logs/cron-gold-phuquy.log');
         $startAt = now()->format('Y-m-d H:i:s');
-        file_put_contents($logFile, "[{$startAt}] ▶ gold:fetch-phuquy START\n", FILE_APPEND);
 
         $this->info('[' . $startAt . '] Fetch giá vàng Phú Quý...');
+        $inserted  = 0;
+        $unchanged = 0;
 
         try {
             $res = Http::timeout(20)
@@ -129,6 +130,7 @@ class FetchGoldPhuquy extends Command
                             && (int)$lastRecord->sell_price === $sell
                         ) {
                             $this->line("  ⏭  [{$unit}] \"{$name}\": giá không đổi (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . "), bỏ qua");
+                            $unchanged++;
                         } else {
                             GoldPriceHistory::create([
                                 'source'      => 'phuquy',
@@ -139,7 +141,7 @@ class FetchGoldPhuquy extends Command
                                 'recorded_at' => $recordedAt,
                             ]);
                             $this->info("  ✅ [{$unit}] \"{$name}\" saved (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . ") lúc " . $recordedAt->format('H:i'));
-                            file_put_contents($logFile, "[" . $recordedAt->format('Y-m-d H:i') . "] ✅ {$unit}: Mua=" . number_format($buy) . " Bán=" . number_format($sell) . "\n", FILE_APPEND);
+                            $inserted++;
                         }
                     }
                 }
@@ -159,8 +161,11 @@ class FetchGoldPhuquy extends Command
             return 1;
         }
 
+        $summary = $inserted > 0
+            ? "inserted: {$inserted} | unchanged: {$unchanged}"
+            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành Phú Quý Gold.');
-        file_put_contents($logFile, "[" . now()->format('Y-m-d H:i:s') . "] ✅ gold:fetch-phuquy DONE\n", FILE_APPEND);
+        file_put_contents($logFile, '[' . now()->format('Y-m-d H:i:s') . "] ✅ gold:fetch-phuquy DONE – {$summary}\n", FILE_APPEND);
         return 0;
     }
 }

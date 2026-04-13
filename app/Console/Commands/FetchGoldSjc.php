@@ -28,8 +28,9 @@ class FetchGoldSjc extends Command
     {
         $logFile = storage_path('logs/cron-gold-sjc.log');
         $startAt = now()->format('Y-m-d H:i:s');
-        file_put_contents($logFile, "[{$startAt}] ▶ gold:fetch-sjc START\n", FILE_APPEND);
         $this->info("[{$startAt}] Fetch giá vàng SJC...");
+        $inserted  = 0;
+        $unchanged = 0;
 
         try {
             // Dùng cURL để truyền User-Agent browser — Http facade bị SJC chặn (HTTP 400)
@@ -124,6 +125,7 @@ class FetchGoldSjc extends Command
                             && (int)$lastRecord->sell_price === $sell
                         ) {
                             $this->line("  ⏭  [{$unit}] Giá không đổi (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . "), bỏ qua");
+                            $unchanged++;
                         } else {
                             GoldPriceHistory::create([
                                 'source'      => 'sjc',
@@ -134,7 +136,7 @@ class FetchGoldSjc extends Command
                                 'recorded_at' => $recordedAt,
                             ]);
                             $this->info("  ✅ [{$unit}] saved (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . ") lúc " . $recordedAt->format('H:i'));
-                            file_put_contents($logFile, "[" . $recordedAt->format('Y-m-d H:i') . "] ✅ {$unit}: Mua=" . number_format($buy) . " Bán=" . number_format($sell) . "\n", FILE_APPEND);
+                            $inserted++;
                         }
                     }
                 }
@@ -153,8 +155,11 @@ class FetchGoldSjc extends Command
             return 1;
         }
 
+        $summary = $inserted > 0
+            ? "inserted: {$inserted} | unchanged: {$unchanged}"
+            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành SJC Gold.');
-        file_put_contents($logFile, "[" . now()->format('Y-m-d H:i:s') . "] ✅ gold:fetch-sjc DONE\n", FILE_APPEND);
+        file_put_contents($logFile, '[' . now()->format('Y-m-d H:i:s') . "] ✅ gold:fetch-sjc DONE – {$summary}\n", FILE_APPEND);
         return 0;
     }
 }

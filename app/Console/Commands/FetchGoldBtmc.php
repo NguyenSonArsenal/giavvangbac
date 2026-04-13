@@ -27,9 +27,11 @@ class FetchGoldBtmc extends Command
     {
         $logFile = storage_path('logs/cron-gold-btmc.log');
         $startAt = now()->format('Y-m-d H:i:s');
-        file_put_contents($logFile, "[{$startAt}] ▶ gold:fetch-btmc START\n", FILE_APPEND);
 
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá vàng BTMC...');
+
+        $inserted  = 0;
+        $unchanged = 0;
 
         $url = "http://api.btmc.vn/api/BTMCAPI/getpricebtmc?key=3kd8ub1llcg9t45hnoh8hmn7t5kc2v";
 
@@ -138,6 +140,7 @@ class FetchGoldBtmc extends Command
 
                         if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
                             $this->line("  ⏭  History [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua');
+                            $unchanged++;
                         } else {
                             GoldPriceHistory::create([
                                 'source'      => 'btmc',
@@ -148,6 +151,7 @@ class FetchGoldBtmc extends Command
                                 'recorded_at' => $recordedAt,
                             ]);
                             $this->info("  ✅ History [{$unit}] saved (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ')');
+                            $inserted++;
                         }
                     }
                 }
@@ -158,7 +162,11 @@ class FetchGoldBtmc extends Command
             return 1;
         }
 
+        $summary = $inserted > 0
+            ? "inserted: {$inserted} | unchanged: {$unchanged}"
+            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành BTMC Gold.');
+        file_put_contents($logFile, '[' . now()->format('Y-m-d H:i:s') . "] ✅ gold:fetch-btmc DONE – {$summary}\n", FILE_APPEND);
         return 0; // SUCCESS
     }
 }

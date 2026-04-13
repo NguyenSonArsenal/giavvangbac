@@ -18,8 +18,9 @@ class FetchSilverKimNganPhuc extends Command
     {
         $logFile = storage_path('logs/cron-silver-kimnganphuc.log');
         $startAt = now()->format('Y-m-d H:i:s');
-        file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-kimnganphuc START\n", FILE_APPEND);
         $this->info("[{$startAt}] Bắt đầu fetch giá bạc Kim Ngân Phúc...");
+        $inserted  = 0;
+        $unchanged = 0;
 
         try {
             $response = Http::timeout(20)
@@ -55,6 +56,7 @@ class FetchSilverKimNganPhuc extends Command
 
                 if ($last && (int)$last->buy_price === $buy && (int)$last->sell_price === $sell) {
                     $this->line("  ⏭  [{$unit}] giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua.');
+                    $unchanged++;
                     continue;
                 }
 
@@ -68,6 +70,7 @@ class FetchSilverKimNganPhuc extends Command
                 ]);
 
                 $this->info("  ✅ [{$unit}] Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
+                $inserted++;
             }
 
         } catch (\Exception $e) {
@@ -77,9 +80,12 @@ class FetchSilverKimNganPhuc extends Command
             return Command::FAILURE;
         }
 
+        $summary = $inserted > 0
+            ? "inserted: {$inserted} | unchanged: {$unchanged}"
+            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $endAt = now()->format('Y-m-d H:i:s');
         $this->info("[{$endAt}] Hoàn thành Kim Ngân Phúc.");
-        file_put_contents($logFile, "[{$endAt}] ■ silver:fetch-kimnganphuc DONE\n", FILE_APPEND);
+        file_put_contents($logFile, "[{$endAt}] ✅ silver:fetch-kimnganphuc DONE – {$summary}\n", FILE_APPEND);
         return Command::SUCCESS;
     }
 

@@ -28,11 +28,12 @@ class FetchSilverPhuQuy extends Command
     {
         $logFile = storage_path('logs/cron-silver-phuquy.log');
         $startAt = now()->format('Y-m-d H:i:s');
-        file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-phuquy START\n", FILE_APPEND);
 
         $this->info("[{$startAt}] Bắt đầu fetch giá bạc Phú Quý...");
 
-        $success = true;
+        $success   = true;
+        $inserted  = 0;
+        $unchanged = 0;
 
         // Fetch chart data cho KG và CHI (lưu dưới dạng KG và LUONG)
         $chartUnits = ['KG', 'CHI'];
@@ -47,7 +48,7 @@ class FetchSilverPhuQuy extends Command
 
                 if ($res->ok()) {
                     $data = $res->json();
-                    $this->saveHistory($data, $cfg['save_unit'], $cfg['mult']);
+                    $this->saveHistory($data, $cfg['save_unit'], $cfg['mult'], $inserted, $unchanged);
                 } else {
                     $this->warn("  ❌ Chart data [{$apiUnit}] HTTP " . $res->status());
                     $success = false;
@@ -59,10 +60,12 @@ class FetchSilverPhuQuy extends Command
             }
         }
 
+        $summary = $inserted > 0
+            ? "inserted: {$inserted} | unchanged: {$unchanged}"
+            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành.');
         $endAt = now()->format('Y-m-d H:i:s');
-        $status = $success ? 'DONE ✓' : 'DONE (có lỗi)';
-        file_put_contents($logFile, "[{$endAt}] ■ silver:fetch-phuquy {$status}\n", FILE_APPEND);
+        file_put_contents($logFile, "[{$endAt}] ✅ silver:fetch-phuquy DONE – {$summary}\n", FILE_APPEND);
         return $success ? Command::SUCCESS : Command::FAILURE;
     }
 
@@ -100,7 +103,7 @@ class FetchSilverPhuQuy extends Command
      * @param string $saveUnit   Đơn vị lưu vào DB (KG hoặc LUONG)
      * @param int    $multiplier Nhân giá trước khi lưu (1 cho KG, 10 cho LUONG từ CHI)
      */
-    private function saveHistory(array $data, string $saveUnit = 'KG', int $multiplier = 1): void
+    private function saveHistory(array $data, string $saveUnit = 'KG', int $multiplier = 1, int &$inserted = 0, int &$unchanged = 0): void
     {
         $dates      = $data['Dates']          ?? [];
         $buyPrices  = $data['LastBuyPrices']  ?? [];
@@ -129,6 +132,7 @@ class FetchSilverPhuQuy extends Command
 
         if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
             $this->line("  ⏭  History [{$saveUnit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua.');
+            $unchanged++;
             return;
         }
 
@@ -141,6 +145,7 @@ class FetchSilverPhuQuy extends Command
             'recorded_at' => now(),
         ]);
         $this->info("  ✅ History [{$saveUnit}]: {$date} Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
+        $inserted++;
     }
 }
 

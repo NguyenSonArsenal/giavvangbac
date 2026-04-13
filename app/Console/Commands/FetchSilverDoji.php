@@ -23,12 +23,13 @@ class FetchSilverDoji extends Command
     {
         $logFile = storage_path('logs/cron-silver-doji.log');
         $startAt = now()->format('Y-m-d H:i:s');
-        file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-doji START\n", FILE_APPEND);
 
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá bạc DOJI...');
 
         $cacheBuster = now()->timestamp * 1000;
         $success     = true;
+        $inserted    = 0;
+        $unchanged   = 0;
 
         foreach (self::ENDPOINTS as $unit => $url) {
             try {
@@ -58,6 +59,7 @@ class FetchSilverDoji extends Command
 
                 if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
                     $this->line("  ⏭  History [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua');
+                    $unchanged++;
                     continue;
                 }
 
@@ -70,6 +72,7 @@ class FetchSilverDoji extends Command
                     'recorded_at' => now(),
                 ]);
                 $this->info("  ✅ History [{$unit}] saved (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ')');
+                $inserted++;
 
             } catch (\Exception $e) {
                 $this->error("  💥 [{$unit}]: " . $e->getMessage());
@@ -78,7 +81,11 @@ class FetchSilverDoji extends Command
             }
         }
 
+        $summary = $inserted > 0
+            ? "inserted: {$inserted} | unchanged: {$unchanged}"
+            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành DOJI.');
+        file_put_contents($logFile, '[' . now()->format('Y-m-d H:i:s') . "] ✅ silver:fetch-doji DONE – {$summary}\n", FILE_APPEND);
         return $success ? Command::SUCCESS : Command::FAILURE;
     }
 

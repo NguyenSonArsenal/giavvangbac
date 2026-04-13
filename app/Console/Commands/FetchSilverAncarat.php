@@ -24,9 +24,10 @@ class FetchSilverAncarat extends Command
     {
         $logFile = storage_path('logs/cron-silver-ancarat.log');
         $startAt = now()->format('Y-m-d H:i:s');
-        file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-ancarat START\n", FILE_APPEND);
 
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá bạc Ancarat...');
+        $inserted  = 0;
+        $unchanged = 0;
 
         try {
             $res = Http::timeout(15)->get(self::API_URL);
@@ -66,6 +67,7 @@ class FetchSilverAncarat extends Command
 
                 if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
                     $this->line("  ⏭  History [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua');
+                    $unchanged++;
                     continue;
                 }
 
@@ -79,6 +81,7 @@ class FetchSilverAncarat extends Command
                 ]);
 
                 $this->info("  ✅ [{$unit}/{$sku}] Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
+                $inserted++;
             }
 
         } catch (\Exception $e) {
@@ -87,9 +90,12 @@ class FetchSilverAncarat extends Command
             return Command::FAILURE;
         }
 
+        $summary = $inserted > 0
+            ? "inserted: {$inserted} | unchanged: {$unchanged}"
+            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành Ancarat.');
         $endAt = now()->format('Y-m-d H:i:s');
-        file_put_contents($logFile, "[{$endAt}] ■ silver:fetch-ancarat DONE\n", FILE_APPEND);
+        file_put_contents($logFile, "[{$endAt}] ✅ silver:fetch-ancarat DONE – {$summary}\n", FILE_APPEND);
         return Command::SUCCESS;
     }
 
