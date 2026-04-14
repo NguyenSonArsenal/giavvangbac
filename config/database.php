@@ -63,6 +63,24 @@ return [
             ]) : [],
         ],
 
+        // ── Kết nối lên DB server (dùng cho lệnh db:sync-remote) ──
+        'mysql_remote' => [
+            'driver'    => 'mysql',
+            'host'      => env('REMOTE_DB_HOST', '127.0.0.1'),
+            'port'      => env('REMOTE_DB_PORT', '3306'),
+            'database'  => env('REMOTE_DB_DATABASE', 'db_giavangbac'),
+            'username'  => env('REMOTE_DB_USERNAME', 'user_giavangbac'),
+            'password'  => env('REMOTE_DB_PASSWORD', ''),
+            'charset'   => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+            'options'   => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),

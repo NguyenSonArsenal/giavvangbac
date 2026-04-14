@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\FetchAllGoldPrice::class,
 		\App\Console\Commands\FetchGoldSjc::class,
 		\App\Console\Commands\SeedGoldBtmh::class,
+		\App\Console\Commands\SyncFromRemoteDb::class,
 	];
 
 	/**
