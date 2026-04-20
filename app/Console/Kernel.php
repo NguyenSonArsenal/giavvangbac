@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\SyncFromRemoteDb::class,
 		// ── Crypto Signal Scanner ──
 		\App\Console\Commands\ScanCryptoSignal::class,
-		\App\Console\Commands\EvaluateCryptoSignal::class,
+//		\App\Console\Commands\EvaluateCryptoSignal::class,
 	];
 
 	/**
