@@ -443,7 +443,7 @@
     .wc-header p  { font-size:11.5px; color:var(--muted); margin:2px 0 0; }
 
     .world-charts-grid {
-      display:grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+      display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
     }
     @media (max-width:700px) { .world-charts-grid { grid-template-columns:1fr; } }
 
@@ -1105,3 +1105,12 @@
         height: 8px !important;
     }
 }
+
+    /* Chart click overlay */
+    .chart-click-overlay {
+      position: absolute; inset: 0; z-index: 10;
+      background: transparent; display: block; cursor: pointer;
+    }
+    .wc-widget-wrap:hover .chart-click-overlay {
+      background: rgba(255,255,255,0.02);
+    }

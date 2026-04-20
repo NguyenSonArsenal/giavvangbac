@@ -57,13 +57,14 @@
       <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js">
         {
           "symbols": [
-            {"proName": "OANDA:XAUUSD",    "title": "Vàng – Gold"},
-            {"proName": "OANDA:XAGUSD",    "title": "Bạc – Silver"},
-            {"proName": "FX_IDC:USDVND",   "title": "USD/VND"},
-            {"proName": "BITSTAMP:BTCUSD",  "title": "Bitcoin – BTC"},
-            {"proName": "BITSTAMP:ETHUSD",  "title": "Ethereum – ETH"},
-            {"proName": "BINANCE:SOLUSDT",  "title": "Solana – SOL"},
-            {"proName": "BINANCE:WLDUSDT",  "title": "Worldcoin – WLD"}
+            {"proName": "OANDA:XAUUSD",       "title": "Vàng – Gold"},
+            {"proName": "OANDA:XAGUSD",       "title": "Bạc – Silver"},
+            {"proName": "BINANCE:BNBUSDT",    "title": "BNB – Binance Coin"},
+            {"proName": "FX_IDC:USDVND",      "title": "USD/VND"},
+            {"proName": "BITSTAMP:BTCUSD",    "title": "Bitcoin – BTC"},
+            {"proName": "BITSTAMP:ETHUSD",    "title": "Ethereum – ETH"},
+            {"proName": "BINANCE:SOLUSDT",    "title": "Solana – SOL"},
+            {"proName": "BINANCE:WLDUSDT",    "title": "Worldcoin – WLD"}
           ],
           "showSymbolLogo": true,
           "colorTheme": "dark",
@@ -134,7 +135,7 @@
               "colorTheme": "dark",
               "isTransparent": true,
               "autosize": true,
-              "largeChartUrl": "",
+              "largeChartUrl": "https://www.tradingview.com/chart/?symbol=OANDA:XAUUSD",
               "noTimeScale": false
             }
             </script>
@@ -159,7 +160,32 @@
               "colorTheme": "dark",
               "isTransparent": true,
               "autosize": true,
-              "largeChartUrl": "",
+              "largeChartUrl": "https://www.tradingview.com/chart/?symbol=OANDA:XAGUSD",
+              "noTimeScale": false
+            }
+            </script>
+          </div>
+        </div>
+      </div>
+      <!-- BNB/USDT -->
+      <div class="world-chart-card">
+        <div class="wc-card-label">
+          <span class="wc-dot" style="background:#F0B90B"></span> BNB/USDT – Binance Coin
+        </div>
+        <div class="wc-widget-wrap">
+          <div class="tradingview-widget-container" id="tv-bnb">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+            {
+              "symbol": "BINANCE:BNBUSDT",
+              "width": "100%",
+              "height": "100%",
+              "locale": "vi",
+              "dateRange": "1D",
+              "colorTheme": "dark",
+              "isTransparent": true,
+              "autosize": true,
+              "largeChartUrl": "https://www.tradingview.com/chart/?symbol=BINANCE:BNBUSDT",
               "noTimeScale": false
             }
             </script>

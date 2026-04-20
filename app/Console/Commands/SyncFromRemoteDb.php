@@ -16,6 +16,23 @@ use Carbon\Carbon;
  *   php artisan db:sync-remote --date=2026-04-10 --date=2026-04-11  → nhiều ngày
  *   php artisan db:sync-remote --dry-run            → xem trước, không insert
  *
+ * # Sync hôm nay (mặc định)
+ * php artisan db:sync-remote
+ * # Sync 1 ngày cụ thể
+ * php artisan db:sync-remote --date=2026-04-13
+ * # Sync nhiều ngày
+ * php artisan db:sync-remote --date=2026-04-10 --date=2026-04-11 --date=2026-04-12
+ * # Sync 7 ngày gần nhất
+ * php artisan db:sync-remote --days=7
+ * # Chỉ sync vàng
+ * php artisan db:sync-remote --date=2026-04-13 --metal=gold
+ * # Chỉ sync bạc Phú Quý
+ * php artisan db:sync-remote --days=3 --metal=silver --source=phuquy
+ * # Xem trước (không ghi DB)
+ * php artisan db:sync-remote --days=7 --dry-run
+ * # Ghi đè bản ghi đã tồn tại
+ * php artisan db:sync-remote --date=2026-04-13 --force
+ *
  * Lưu ý: Phải cấu hình REMOTE_DB_* trong .env trước khi chạy.
  */
 class SyncFromRemoteDb extends Command

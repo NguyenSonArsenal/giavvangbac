@@ -20,8 +20,12 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\FetchGoldPhuquy::class,
 		\App\Console\Commands\FetchAllGoldPrice::class,
 		\App\Console\Commands\FetchGoldSjc::class,
+		\App\Console\Commands\FetchGoldSjc::class,
 		\App\Console\Commands\SeedGoldBtmh::class,
 		\App\Console\Commands\SyncFromRemoteDb::class,
+		// ── Crypto Signal Scanner ──
+		\App\Console\Commands\ScanCryptoSignal::class,
+		\App\Console\Commands\EvaluateCryptoSignal::class,
 	];
 
 	/**
@@ -154,6 +158,28 @@ class Kernel extends ConsoleKernel
         $schedule->command('silver:evaluate-accuracy')
             ->dailyAt('8:00')
             ->withoutOverlapping();
+
+        // ── Crypto Signal Scanner (Binance: BNB/USDT | MA + RSI) ───────────────
+        // Khung nen 1H → check moi 15 phut (bat tin hieu som, khong qua nhieu)
+        // Gio VN: 08:00–23:59 | Moi ngay: 64 lan check
+        $schedule->command('crypto:scan-signal')
+            ->everyFifteenMinutes()          // 15 phut/lan — hop ly voi khung 1H
+            ->between('08:00', '23:59')      // 8 gio sang den nua dem
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/cron-crypto-signal.log'));
+
+        // ── Danh gia ket qua tin hieu (WIN/LOSS/EXPIRED) ───────────────────
+        // Chay moi 15 phut, check gia hien tai vs target/stop_loss
+//        $schedule->command('crypto:evaluate-signal')
+//            ->everyFifteenMinutes()
+//            ->between('08:00', '23:59')
+//            ->withoutOverlapping()
+//            ->appendOutputTo(storage_path('logs/cron-crypto-signal.log'));
+
+        // Thong ke win rate luc 23:30 moi ngay
+        $schedule->command('crypto:evaluate-signal --stats')
+            ->dailyAt('23:30')
+            ->appendOutputTo(storage_path('logs/cron-crypto-signal.log'));
     }
 
     /**

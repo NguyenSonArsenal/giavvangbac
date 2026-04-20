@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  {{-- One-Time Nonce Token – dùng để xác thực mọi API request --}}
+  <meta name="api-nonce" content="{{ \App\Services\ApiNonceService::generate() }}">
   <title>Pharma</title>
   <link rel="icon" type="image/x-icon" href="{{ asset('frontend/image/favicon.jpg') }}">
 
@@ -39,9 +41,29 @@
 <script src="{{ asset('frontend/js/common.js')  }}"></script>
 
 <script type="text/javascript">
+  // ── One-Time Nonce Token Manager ─────────────────────────────────────────
+  // Token được nhúng vào trang khi load, chỉ dùng 1 lần duy nhất.
+  // Sau mỗi request thành công, server trả về token mới trong header X-Api-Nonce-Next.
+  // JS tự động cập nhật token → request tiếp theo luôn có token hợp lệ.
+  window._apiNonce = $('meta[name="api-nonce"]').attr('content');
+
+  // ── jQuery AJAX interceptor – tự động đính kèm nonce vào mọi API call ────
   $.ajaxSetup({
     headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+    },
+    beforeSend: function(xhr) {
+      // Đính kèm nonce token hiện tại
+      if (window._apiNonce) {
+        xhr.setRequestHeader('X-Api-Nonce', window._apiNonce);
+      }
+    },
+    complete: function(xhr) {
+      // Đọc token mới từ response header, lưu lại cho request kế tiếp
+      var nextNonce = xhr.getResponseHeader('X-Api-Nonce-Next');
+      if (nextNonce) {
+        window._apiNonce = nextNonce;
+      }
     }
   });
 </script>

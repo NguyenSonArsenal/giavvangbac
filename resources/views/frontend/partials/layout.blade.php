@@ -27,6 +27,22 @@
   <link rel="stylesheet" href="/frontend/css/app.css"/>
   @stack('styles')
   @stack('head-scripts')
+  <script>
+  /**
+   * apiFetch – wrapper fetch() tự động gửi X-CSRF-Token.
+   * Chỉ domain giảvangbac.vn mới có CSRF token hợp lệ → mọi
+   * request từ domain khác / curl đều bị từ chối 403.
+   */
+  window.apiFetch = function(url, options) {
+    options = options || {};
+    var token = (document.querySelector('meta[name="csrf-token"]') || {}).content || '';
+    options.headers = Object.assign({
+      'X-CSRF-Token': token,
+      'X-Requested-With': 'XMLHttpRequest',
+    }, options.headers || {});
+    return fetch(url, options);
+  };
+  </script>
 </head>
 <body>
 @hasSection('bg-glow')
