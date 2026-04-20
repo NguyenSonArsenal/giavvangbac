@@ -21,7 +21,7 @@
 
   /* ── Update SSR table with live data ── */
   function refreshPrices() {
-    fetch(API_URLS.current)
+    apiFetch(API_URLS.current)
       .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function(json) {
         if (!json.success || !json.data) return;
@@ -61,7 +61,7 @@
     loading.style.display = 'flex'; canvas.style.display = 'none';
 
     var url = API_URLS.history + '?days=' + activeDays + '&type=' + activeUnit;
-    fetch(url)
+    apiFetch(url)
       .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function(json) {
         loading.style.display = 'none';
