@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\SilverPriceHistory;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -116,12 +117,34 @@ class FetchSilverPhuQuy extends Command
         // Lấy entry CUỐI cùng trong data trả về (mới nhất)
         $lastIdx = count($dates) - 1;
 
-        $date  = $dates[$lastIdx]      ?? null;
-        $buy   = isset($buyPrices[$lastIdx])  ? (int) round($buyPrices[$lastIdx]  * $multiplier) : null;
-        $sell  = isset($sellPrices[$lastIdx]) ? (int) round($sellPrices[$lastIdx] * $multiplier) : null;
+        $dateRaw = $dates[$lastIdx]      ?? null;
+        $buy     = isset($buyPrices[$lastIdx])  ? (int) round($buyPrices[$lastIdx]  * $multiplier) : null;
+        $sell    = isset($sellPrices[$lastIdx]) ? (int) round($sellPrices[$lastIdx] * $multiplier) : null;
 
-        if (!$date || !$buy || !$sell) {
+        if (!$dateRaw || !$buy || !$sell) {
             return;
+        }
+
+        // Parse thời gian từ API (Dates thường dạng "DD/MM/YYYY" hoặc "YYYY-MM-DD")
+        // Giữ null nếu không parse được (để không ghi thời gian cron vào DB)
+        $websiteTimestamp = null;
+        try {
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateRaw)) {
+                // ISO format: "2026-04-21"
+                $websiteTimestamp = Carbon::createFromFormat('Y-m-d', $dateRaw);
+            } elseif (preg_match('/^\d{2}\/\d{2}\/\d{4}/', $dateRaw)) {
+                // Vietnamese format: "21/04/2026" hoặc "21/04/2026 13:45"
+                $fmt = str_contains($dateRaw, ' ') ? 'd/m/Y H:i' : 'd/m/Y';
+                $websiteTimestamp = Carbon::createFromFormat($fmt, trim($dateRaw));
+            }
+        } catch (\Exception) {
+            $websiteTimestamp = null;
+        }
+
+        if ($websiteTimestamp) {
+            $this->line("  🕐 [{$saveUnit}] Thời gian website: " . $websiteTimestamp->format('d/m/Y H:i'));
+        } else {
+            $this->line("  ⚠ [{$saveUnit}] Không parse được thời gian website, sẽ giữ nguyên recorded_at cũ nếu giá không đổi");
         }
 
         // Dedup theo giá: lấy record cuối cùng trong DB, so sánh giá
@@ -131,20 +154,30 @@ class FetchSilverPhuQuy extends Command
             ->first();
 
         if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
-            $this->line("  ⏭  History [{$saveUnit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua.');
+            if ($websiteTimestamp) {
+                // Website có timestamp thực → cập nhật recorded_at
+                $lastRecord->recorded_at = $websiteTimestamp;
+                $lastRecord->save();
+                $this->line("  🔄 [{$saveUnit}] giá không đổi → cập nhật recorded_at = " . $websiteTimestamp->format('H:i d/m/Y'));
+            } else {
+                // Không có timestamp website → giữ nguyên, không ghi gì
+                $this->line("  ⏭  [{$saveUnit}] giá không đổi, không có timestamp website → giữ nguyên");
+            }
             $unchanged++;
             return;
         }
 
+        // Giá mới: dùng website timestamp nếu có, fallback now()
+        $recordedAt = $websiteTimestamp ?? now();
         SilverPriceHistory::create([
             'source'      => 'phuquy',
             'unit'        => $saveUnit,
             'buy_price'   => $buy,
             'sell_price'  => $sell,
-            'price_date'  => $date,
-            'recorded_at' => now(),
+            'price_date'  => $recordedAt->toDateString(),
+            'recorded_at' => $recordedAt,
         ]);
-        $this->info("  ✅ History [{$saveUnit}]: {$date} Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
+        $this->info("  ✅ [{$saveUnit}] " . $recordedAt->format('d/m') . ' Mua=' . number_format($buy) . ' Bán=' . number_format($sell) . ' lúc ' . $recordedAt->format('H:i'));
         $inserted++;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\SilverPriceHistory;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -51,27 +52,56 @@ class FetchSilverDoji extends Command
                 $last = end($rows);
                 [$buy, $sell, $datetime] = $last;
 
-                // Lưu history – dedup theo giá (1 bảng duy nhất)
+                // Parse timestamp từ website (format: "HH:MM:SS DD/MM/YYYY")
+                // Ví dụ: "13:45:30 21/04/2026" – giữ null nếu không parse được
+                $websiteTimestamp = null;
+                if ($datetime) {
+                    try {
+                        // Bỏ giây nếu có (HH:MM:SS → HH:MM)
+                        $dtClean = preg_replace('/(\d{2}:\d{2}):\d{2}/', '$1', trim($datetime));
+                        $websiteTimestamp = Carbon::createFromFormat('H:i d/m/Y', $dtClean);
+                    } catch (\Exception) {
+                        $websiteTimestamp = null;
+                    }
+                }
+
+                if ($websiteTimestamp) {
+                    $this->line("  🕐 [{$unit}] Thời gian website: " . $websiteTimestamp->format('d/m/Y H:i'));
+                } else {
+                    $this->line("  ⚠ [{$unit}] Không parse được thời gian website, giữ nguyên recorded_at cũ");
+                }
+
+                // Lưu history – dedup theo giá
                 $lastRecord = SilverPriceHistory::where('source', 'doji')
                     ->where('unit', $unit)
                     ->orderByDesc('recorded_at')
                     ->first();
 
                 if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
-                    $this->line("  ⏭  History [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua');
+                    if ($websiteTimestamp) {
+                        // Giá không đổi, cập nhật recorded_at theo thời gian website (không dùng now())
+                        $lastRecord->recorded_at = $websiteTimestamp;
+                        $lastRecord->save();
+                        $this->line("  🔄 [{$unit}] giá không đổi → cập nhật recorded_at = " . $websiteTimestamp->format('H:i d/m/Y'));
+                    } else {
+                        // Không có timestamp website → giữ nguyên, không ghi gì
+                        $this->line("  ⏭  [{$unit}] giá không đổi, không có timestamp website → giữ nguyên");
+                    }
                     $unchanged++;
                     continue;
                 }
 
+                // Giá mới: dùng timestamp website nếu có, fallback now()
+                $recordedAt = $websiteTimestamp ?? now();
                 SilverPriceHistory::create([
                     'source'      => 'doji',
                     'unit'        => $unit,
                     'buy_price'   => $buy,
                     'sell_price'  => $sell,
-                    'price_date'  => now()->toDateString(),
-                    'recorded_at' => now(),
+                    'price_date'  => $recordedAt->toDateString(),
+                    'recorded_at' => $recordedAt,
                 ]);
-                $this->info("  ✅ History [{$unit}] saved (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ')');
+                $this->info("  ✅ [{$unit}] Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ' lúc ' . $recordedAt->format('H:i d/m'));
                 $inserted++;
 
             } catch (\Exception $e) {

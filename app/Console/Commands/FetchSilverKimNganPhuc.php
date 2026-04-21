@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\SilverPriceHistory;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -33,7 +34,36 @@ class FetchSilverKimNganPhuc extends Command
                 return Command::FAILURE;
             }
 
-            $prices = $this->parseTable($response->body());
+            $html = $response->body();
+
+            // ── 1. Parse thời gian cập nhật từ HTML ──────────────────────────
+            // Giữ null nếu không parse được (để không ghi thời gian cron vào DB)
+            $websiteTimestamp = null;
+            // Thử pattern "HH:MM DD/MM/YYYY"
+            if (preg_match('/(\d{1,2}:\d{2})\s+(\d{2}\/\d{2}\/\d{4})/', $html, $m)) {
+                try {
+                    $websiteTimestamp = Carbon::createFromFormat('H:i d/m/Y', trim($m[1]) . ' ' . trim($m[2]));
+                } catch (\Exception) {
+                    $websiteTimestamp = null;
+                }
+            }
+            // Thử pattern "DD/MM/YYYY HH:MM"
+            if (!$websiteTimestamp && preg_match('/(\d{2}\/\d{2}\/\d{4})\s+(\d{1,2}:\d{2})/', $html, $m)) {
+                try {
+                    $websiteTimestamp = Carbon::createFromFormat('d/m/Y H:i', trim($m[1]) . ' ' . trim($m[2]));
+                } catch (\Exception) {
+                    $websiteTimestamp = null;
+                }
+            }
+
+            if ($websiteTimestamp) {
+                $this->info("  🕐 Thời gian website: " . $websiteTimestamp->format('d/m/Y H:i'));
+            } else {
+                $this->warn("  ⚠ Không parse được thời gian website, sẽ giữ nguyên recorded_at cũ nếu giá không đổi");
+            }
+
+            // ── 2. Parse giá từ HTML ─────────────────────────────────────────
+            $prices = $this->parseTable($html);
 
             if (empty($prices)) {
                 $this->error('Không parse được giá từ HTML');
@@ -48,28 +78,37 @@ class FetchSilverKimNganPhuc extends Command
                     continue;
                 }
 
-                // Dedup: không lưu nếu giá không đổi
                 $last = SilverPriceHistory::where('source', 'kimnganphuc')
                     ->where('unit', $unit)
                     ->orderByDesc('recorded_at')
                     ->first();
 
                 if ($last && (int)$last->buy_price === $buy && (int)$last->sell_price === $sell) {
-                    $this->line("  ⏭  [{$unit}] giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua.');
+                    if ($websiteTimestamp) {
+                        // Website có timestamp thực → cập nhật recorded_at
+                        $last->recorded_at = $websiteTimestamp;
+                        $last->save();
+                        $this->line("  🔄 [{$unit}] giá không đổi → cập nhật recorded_at = " . $websiteTimestamp->format('H:i d/m/Y'));
+                    } else {
+                        // Không có timestamp website → giữ nguyên, không ghi gì
+                        $this->line("  ⏭  [{$unit}] giá không đổi, không có timestamp website → giữ nguyên");
+                    }
                     $unchanged++;
                     continue;
                 }
 
+                // Giá mới: dùng website timestamp nếu có, fallback now()
+                $recordedAt = $websiteTimestamp ?? now();
                 SilverPriceHistory::create([
                     'source'      => 'kimnganphuc',
                     'unit'        => $unit,
                     'buy_price'   => $buy,
                     'sell_price'  => $sell,
-                    'price_date'  => now()->toDateString(),
-                    'recorded_at' => now(),
+                    'price_date'  => $recordedAt->toDateString(),
+                    'recorded_at' => $recordedAt,
                 ]);
 
-                $this->info("  ✅ [{$unit}] Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
+                $this->info("  ✅ [{$unit}] Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ' lúc ' . $recordedAt->format('H:i d/m'));
                 $inserted++;
             }
 

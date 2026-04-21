@@ -175,11 +175,11 @@ class Kernel extends ConsoleKernel
 //            ->between('08:00', '23:59')
 //            ->withoutOverlapping()
 //            ->appendOutputTo(storage_path('logs/cron-crypto-signal.log'));
-
-        // Thong ke win rate luc 23:30 moi ngay
-        $schedule->command('crypto:evaluate-signal --stats')
-            ->dailyAt('23:30')
-            ->appendOutputTo(storage_path('logs/cron-crypto-signal.log'));
+//
+//        // Thong ke win rate luc 23:30 moi ngay
+//        $schedule->command('crypto:evaluate-signal --stats')
+//            ->dailyAt('23:30')
+//            ->appendOutputTo(storage_path('logs/cron-crypto-signal.log'));
     }
 
     /**

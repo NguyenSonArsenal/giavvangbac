@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\SilverPriceHistory;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +13,8 @@ class FetchSilverAncarat extends Command
     protected $signature   = 'silver:fetch-ancarat';
     protected $description = 'Fetch giá bạc từ Ancarat (giabac.ancarat.com) mỗi 30 phút';
 
-    const API_URL = 'https://giabac.ancarat.com/api/price-data';
+    const API_URL     = 'https://giabac.ancarat.com/api/price-data';
+    const PAGE_URL    = 'https://giabac.ancarat.com/';
 
     // SKU đại diện chính cho mỗi unit – chỉ track A4 (Lượng) và K4 (Kilo)
     const PRIMARY_SKU = [
@@ -43,6 +45,52 @@ class FetchSilverAncarat extends Command
                 return Command::FAILURE;
             }
 
+            // ── 1. Parse thời gian cập nhật ──────────────────────────────────
+            // Giữ null nếu không parse được (để không ghi thời gian cron vào DB)
+            $websiteTimestamp = null;
+
+            // Kiểm tra trong rows: dòng đầu hoặc cuối có thể chứa datetime string
+            foreach ($rows as $row) {
+                if (!is_array($row)) continue;
+                foreach ($row as $cell) {
+                    if (!is_string($cell)) continue;
+                    // Pattern: "DD/MM/YYYY HH:MM" hoặc "HH:MM DD/MM/YYYY"
+                    if (preg_match('/(\d{2}\/\d{2}\/\d{4})\s+(\d{1,2}:\d{2})/', $cell, $m)) {
+                        try { $websiteTimestamp = Carbon::createFromFormat('d/m/Y H:i', $m[1] . ' ' . $m[2]); } catch (\Exception) {}
+                        break 2;
+                    }
+                    if (preg_match('/(\d{1,2}:\d{2})\s+(\d{2}\/\d{2}\/\d{4})/', $cell, $m)) {
+                        try { $websiteTimestamp = Carbon::createFromFormat('H:i d/m/Y', $m[1] . ' ' . $m[2]); } catch (\Exception) {}
+                        break 2;
+                    }
+                }
+            }
+
+            // Nếu không parse được từ API, fetch trang HTML để lấy thời gian
+            if (!$websiteTimestamp) {
+                try {
+                    $pageRes = Http::timeout(15)
+                        ->withHeaders(['User-Agent' => 'Mozilla/5.0 (compatible; GiaVangBot/1.0)'])
+                        ->get(self::PAGE_URL);
+                    if ($pageRes->ok()) {
+                        $pageHtml = $pageRes->body();
+                        if (preg_match('/(\d{2}\/\d{2}\/\d{4})\s+(\d{1,2}:\d{2})/', $pageHtml, $m)) {
+                            try { $websiteTimestamp = Carbon::createFromFormat('d/m/Y H:i', $m[1] . ' ' . $m[2]); } catch (\Exception) {}
+                        }
+                        if (!$websiteTimestamp && preg_match('/(\d{1,2}:\d{2})\s+(\d{2}\/\d{2}\/\d{4})/', $pageHtml, $m)) {
+                            try { $websiteTimestamp = Carbon::createFromFormat('H:i d/m/Y', $m[1] . ' ' . $m[2]); } catch (\Exception) {}
+                        }
+                    }
+                } catch (\Exception) {}
+            }
+
+            if ($websiteTimestamp) {
+                $this->info('  🕐 Thời gian website: ' . $websiteTimestamp->format('d/m/Y H:i'));
+            } else {
+                $this->warn('  ⚠ Không parse được thời gian website, sẽ giữ nguyên recorded_at cũ nếu giá không đổi');
+            }
+
+            // ── 2. Parse giá và lưu DB ──────────────────────────────────
             // Parse thành map: sku → [sell, buy]
             $priceMap = $this->parsePriceMap($rows);
             $this->info('  Parsed ' . count($priceMap) . ' sản phẩm có SKU');
@@ -66,21 +114,31 @@ class FetchSilverAncarat extends Command
                     ->first();
 
                 if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
-                    $this->line("  ⏭  History [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua');
+                    if ($websiteTimestamp) {
+                        // Website có timestamp thực → cập nhật recorded_at
+                        $lastRecord->recorded_at = $websiteTimestamp;
+                        $lastRecord->save();
+                        $this->line("  🔄 [{$unit}/{$sku}] giá không đổi → cập nhật recorded_at = " . $websiteTimestamp->format('H:i d/m/Y'));
+                    } else {
+                        // Không có timestamp website → giữ nguyên, không ghi gì
+                        $this->line("  ⏭  [{$unit}/{$sku}] giá không đổi, không có timestamp website → giữ nguyên");
+                    }
                     $unchanged++;
                     continue;
                 }
 
+                // Giá mới: dùng website timestamp nếu có, fallback now()
+                $recordedAt = $websiteTimestamp ?? now();
                 SilverPriceHistory::create([
                     'source'      => 'ancarat',
                     'unit'        => $unit,
                     'buy_price'   => $buy,
                     'sell_price'  => $sell,
-                    'price_date'  => now()->toDateString(),
-                    'recorded_at' => now(),
+                    'price_date'  => $recordedAt->toDateString(),
+                    'recorded_at' => $recordedAt,
                 ]);
 
-                $this->info("  ✅ [{$unit}/{$sku}] Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
+                $this->info("  ✅ [{$unit}/{$sku}] Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ' lúc ' . $recordedAt->format('H:i d/m'));
                 $inserted++;
             }
 
