@@ -163,10 +163,9 @@ class Kernel extends ConsoleKernel
         // Khung nen 1H → check moi 15 phut (bat tin hieu som, khong qua nhieu)
         // Gio VN: 08:00–23:59 | Moi ngay: 64 lan check
         $schedule->command('crypto:scan-signal')
-            ->everyFifteenMinutes()          // 15 phut/lan — hop ly voi khung 1H
-            ->between('08:00', '23:59')      // 8 gio sang den nua dem
-            ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/cron-crypto-signal.log'));
+            ->everyTenMinutes()          // 15 phut/lan — hop ly voi khung 1H
+            ->between('08:00', '00:00')      // 8 gio sang den nua dem
+            ->withoutOverlapping();
 
         // ── Danh gia ket qua tin hieu (WIN/LOSS/EXPIRED) ───────────────────
         // Chay moi 15 phut, check gia hien tai vs target/stop_loss
