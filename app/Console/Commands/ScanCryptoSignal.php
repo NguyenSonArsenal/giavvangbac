@@ -21,9 +21,10 @@ use Carbon\Carbon;
 class ScanCryptoSignal extends Command
 {
     protected $signature = 'crypto:scan-signal
-                            {--symbol= : Chỉ quét 1 symbol cụ thể (vd: BNBUSDT)}
-                            {--all     : Quét tất cả symbols trong config}
-                            {--no-db   : Không ghi vào database, chỉ log file}';
+                            {--symbol=      : Chỉ quét 1 symbol cụ thể (vd: BNBUSDT)}
+                            {--all          : Quét tất cả symbols trong config}
+                            {--no-db        : Không ghi vào database, chỉ log file}
+                            {--test-discord : Test gửi tin nhắn Discord (không scan signal)}';
 
     protected $description = 'Quet tín hieu mua crypto tren Binance moi 5 phut (MA + RSI)';
 
@@ -45,6 +46,18 @@ class ScanCryptoSignal extends Command
     public function handle(BinanceAnalyzerService $analyzer): int
     {
         $logFile = storage_path('logs/cron-crypto-signal.log');
+
+        // ── TEST DISCORD: chạy thử gửi tin nhắn ────────────────────────
+        // Chạy: php artisan crypto:scan-signal --test-discord
+        if ($this->option('test-discord')) {
+            $ok = $this->sendDiscord('Hi Discord! 👋 Từ server giá vàng bạc - test kết nối thành công!');
+            if ($ok) {
+                $this->info('✅ Gửi Discord thành công!');
+            } else {
+                $this->error('❌ Gửi Discord thất bại! Kiểm tra DISCORD_WEBHOOK_URL trong .env');
+            }
+            return 0;
+        }
 
         // ── Helper ghi log đồng thời terminal + file ─────────────────────────
         $log = function (string $msg, string $level = 'line') use ($logFile) {
@@ -71,6 +84,10 @@ class ScanCryptoSignal extends Command
         $log("Chi bao   : MA7 | MA25 | MA99 | RSI(14)");
         $log("Muc tieu  : 100k-300k VND/ngay | Von 50tr");
         $log(str_repeat('=', 65));
+
+        // ── [TEST] Ping Discord mỗi lần cron chạy ────────────────────────────
+        // TODO: Xóa dòng này sau khi confirm cron + Discord hoạt động ổn
+//        $this->sendDiscord("⏱️ Cron ScanCryptoSignal chạy lúc: " . $now->format('H:i:s d/m/Y'));
 
         $totalSignals = 0;
 
@@ -138,6 +155,11 @@ class ScanCryptoSignal extends Command
                 } else {
                     $log("   [-] Score thap ({$result['score']}), bo qua — khong du dieu kien mua");
                 }
+
+                // ── Luôn gửi kết quả lên Discord (test + học) ────────────────
+                // TODO: Sau khi ổn định, đổi thành chỉ gửi khi score >= 5
+                $this->notifyDiscord($result);
+                $log("   [DISCORD] Da gui ket qua", 'info');
 
             } catch (\Exception $e) {
                 $log("   [ERROR] {$symbol}: " . $e->getMessage(), 'error');
@@ -212,5 +234,116 @@ class ScanCryptoSignal extends Command
             'warnings'        => json_encode($result['warnings'], JSON_UNESCAPED_UNICODE),
             'scanned_at'      => $now,
         ]);
+    }
+
+    // ── Format và gửi thông báo signal lên Discord ────────────────────────────
+    private function notifyDiscord(array $result): void
+    {
+        $score = $result['score'];
+        $rsi   = $result['rsi'];
+
+        // Icon + label theo score
+        if ($score >= 7) {
+            $icon  = '🔥';
+            $label = 'STRONG BUY — Tin hieu MANH!';
+        } elseif ($score >= 5) {
+            $icon  = '⚠️';
+            $label = 'XEM XET MUA — Kiem tra them chart';
+        } elseif ($score >= 3) {
+            $icon  = '👀';
+            $label = 'THEO DOI — Chua du dieu kien';
+        } else {
+            $icon  = '😴';
+            $label = 'CHUA CO TIN HIEU — Cho them';
+        }
+
+        // Score bar
+        $bar = str_repeat('█', $score) . str_repeat('░', 10 - $score);
+
+        // RSI zone
+        $rsiNote = $rsi < 30 ? '🟢 Oversold-Vung mua tot'
+                 : ($rsi < 50 ? '🟡 Thap-Theo doi'
+                 : ($rsi < 70 ? '⚪ Binh thuong'
+                 : '🔴 Overbought-Tranh mua'));
+
+        $msg  = "{$icon} **{$result['symbol']}** [{$result['interval']}]\n";
+        $msg .= "**{$label}**\n";
+        $msg .= "─────────────────────────────\n";
+        $msg .= "💰 Gia   : \${$result['price']} USDT\n";
+        $msg .= "📊 Score : [{$bar}] {$score}/10\n";
+        $msg .= "📈 MA7   : {$result['ma7']}\n";
+        $msg .= "📈 MA25  : {$result['ma25']}\n";
+        $msg .= "📈 MA99  : {$result['ma99']}\n";
+        $msg .= "💡 RSI   : {$rsi} — {$rsiNote}\n";
+
+        // Chỉ hiện target/stop loss khi đáng xem
+        if ($score >= self::MIN_SCORE_TO_LOG) {
+            $targetPct   = 1.0;
+            $stopPct     = 0.5;
+            $targetPrice = round($result['price'] * (1 + $targetPct / 100), 4);
+            $stopPrice   = round($result['price'] * (1 - $stopPct  / 100), 4);
+
+            $msg .= "─────────────────────────────\n";
+            $msg .= "🎯 Chot loi : \${$targetPrice}  (+{$targetPct}%)\n";
+            $msg .= "🛡️ Cat lo   : \${$stopPrice}  (-{$stopPct}%)\n";
+            $msg .= "⚖️ RR Ratio : 2:1\n";
+        }
+
+        $msg .= "─────────────────────────────\n";
+        $msg .= "⏰ " . now()->format('H:i:s d/m/Y');
+
+        $this->sendDiscord($msg);
+    }
+
+    // ── Gửi tin nhắn lên Discord qua Webhook ─────────────────────────────────
+    /**
+     * Gửi tin nhắn lên Discord channel qua Webhook URL.
+     *
+     * Cấu hình trong .env:
+     *   DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/xxx/yyy
+     *
+     * @param  string $message  Nội dung tin nhắn (plain text)
+     * @return bool             true nếu gửi thành công (HTTP 204)
+     */
+    private function sendDiscord(string $message): bool
+    {
+        $webhookUrl = getConstant('DISCORD_WEBHOOK_URL', '');
+
+        if (!$webhookUrl) {
+            $this->warn('  ⚠ Thiếu DISCORD_WEBHOOK_URL trong .env');
+            return false;
+        }
+
+        // Discord Webhook nhận JSON với field "content"
+        $payload = json_encode(['content' => $message]);
+
+        $ch = curl_init($webhookUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $payload,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 10,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
+        curl_close($ch);
+
+        if ($curlErr) {
+            $this->error('  💥 cURL error: ' . $curlErr);
+            Log::error('sendDiscord cURL error', ['error' => $curlErr]);
+            return false;
+        }
+
+        // Discord trả về HTTP 204 (No Content) khi gửi thành công
+        if ($httpCode !== 204) {
+            $this->error('  ❌ Discord Webhook lỗi HTTP ' . $httpCode . ': ' . $response);
+            Log::error('sendDiscord error', ['http_code' => $httpCode, 'response' => $response]);
+            return false;
+        }
+
+        return true;
     }
 }
