@@ -85,10 +85,6 @@ class ScanCryptoSignal extends Command
         $log("Muc tieu  : 100k-300k VND/ngay | Von 50tr");
         $log(str_repeat('=', 65));
 
-        // ── [TEST] Ping Discord mỗi lần cron chạy ────────────────────────────
-        // TODO: Xóa dòng này sau khi confirm cron + Discord hoạt động ổn
-//        $this->sendDiscord("⏱️ Cron ScanCryptoSignal chạy lúc: " . $now->format('H:i:s d/m/Y'));
-
         $totalSignals = 0;
 
         foreach ($symbols as $symbol) {
@@ -152,14 +148,15 @@ class ScanCryptoSignal extends Command
                         $log("   [DB] Da luu vao crypto_signal_logs", 'info');
                     }
 
+                    // ── Gửi Discord chỉ khi có tín hiệu mua (score >= 5) ─────
+                    if ($result['score'] >= 5) {
+                        $this->notifyDiscord($result);
+                        $log("   [DISCORD] Da gui tin hieu mua", 'info');
+                    }
+
                 } else {
                     $log("   [-] Score thap ({$result['score']}), bo qua — khong du dieu kien mua");
                 }
-
-                // ── Luôn gửi kết quả lên Discord (test + học) ────────────────
-                // TODO: Sau khi ổn định, đổi thành chỉ gửi khi score >= 5
-                $this->notifyDiscord($result);
-                $log("   [DISCORD] Da gui ket qua", 'info');
 
             } catch (\Exception $e) {
                 $log("   [ERROR] {$symbol}: " . $e->getMessage(), 'error');
